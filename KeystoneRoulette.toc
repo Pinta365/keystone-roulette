@@ -1,12 +1,12 @@
-## Interface: 100207
+## Interface: 110005
 ## Name: KeystoneRoulette
 ## Title: |cff45D388KeystoneRoulette|r
 ## Notes: KeystoneRoulette
 ## Author: Pinta365@Github
 ## Version: 0.0.1
 ## SavedVariables: KeystoneRouletteDB
-## X-Curse-Project-ID: 
-## X-Wago-ID: 
+## X-Curse-Project-ID: 1159943
+## X-Wago-ID: b6mbVnKP
 ## X-WoWI-ID: 
 ## IconTexture: Interface\AddOns\KeystoneRoulette\Textures\pinta
 
