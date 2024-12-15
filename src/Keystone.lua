@@ -2,6 +2,30 @@
 
 local _, KSR = ...
 
+
+---Abbreviates a dungeon name using its map ID.
+---@param mapID number the map ID of the dungeon
+---@return string the abbreviated dungeon name
+KSR.AbbreviateDungeonName = function(mapID)
+    local abbreviations = {
+        --The War Within
+        [499] = "PoSH", -- Priory of the Sacred Flame
+        [500] = "Rook", -- The Rookery
+        [501] = "SV",   -- The Stonevault
+        [502] = "CoT",  -- City of Threads
+        [503] = "Ara",  -- Ara-Kara, City of Echoes
+        [504] = "DC",   -- Darkflame Cleft
+        [505] = "DB",   -- The Dawnbreaker
+        [506] = "CM",   -- Cinderbrew Meadery
+        --Seasonal
+        [353] = "SoB",  -- Siege of Boralus
+        [375] = "MoTS", -- Mists of Tirna Scithe
+        [376] = "NW",   -- Necrotic Wake
+        [507] = "GB",   -- Grim Batol
+    }
+    return abbreviations[mapID]
+end
+
 ---Retrieves keystone data for all party members.
 ---@return table table containing keystone information for each party member with a keystone.
 KSR.GetKeystoneData = function()
@@ -21,6 +45,7 @@ KSR.GetKeystoneData = function()
                     keys[i] = {
                         player = ({strsplit("-", unitName)})[1],
                         dungeon = name,
+                        abbr = KSR.AbbreviateDungeonName(keystoneInfo.challengeMapID),
                         level = keystoneInfo.level
                     }
                 end
@@ -75,6 +100,17 @@ KSR.AnnounceKeystone = function(keys, chosenKey)
 
         local message = table.concat(announcementParts)
 
+          -- List all available keys
+        print(WrapTextInColorCode("-------------------------------------------------", KSR.colors["YELLOW"]))
+        print(WrapTextInColorCode("Keystone Roulette - Available Keys:", KSR.colors["YELLOW"])) -- Yellow header
+        print(WrapTextInColorCode("-------------------------------------------------", KSR.colors["YELLOW"]))
+        for i, key in ipairs(keys) do
+            local keyString = string.format("%d. %s - %s +%d", i, key.player, key.dungeon, key.level)
+            print(WrapTextInColorCode(keyString, KSR.colors["PRIMARY"]))  -- Use your primary color for the keys
+        end
+        print(WrapTextInColorCode("-------------------------------------------------", KSR.colors["YELLOW"]))
+
+
         -- Add a prefix to indicate it's a roulette result
         local prefix = "Keystone Roulette: "
         message = prefix .. message 
@@ -88,7 +124,7 @@ KSR.AnnounceKeystone = function(keys, chosenKey)
         -- List all available keys
         local keyList = "Available keys were: "
         for i, key in ipairs(keys) do
-            keyList = keyList .. string.format("%s (%s +%d)", key.player, key.dungeon, key.level)
+            keyList = keyList .. string.format("%s+%d", key.abbr, key.level)
             if i < #keys then
                 keyList = keyList .. ", "
             end

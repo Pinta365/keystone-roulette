@@ -3,11 +3,11 @@
 ## Title: |cff45D388KeystoneRoulette|r
 ## Notes: KeystoneRoulette
 ## Author: Pinta365@Github
-## Version: 0.0.1
+## Version: 0.0.2
 ## SavedVariables: KeystoneRouletteDB
 ## X-Curse-Project-ID: 1159943
 ## X-Wago-ID: b6mbVnKP
-## X-WoWI-ID: 
+## X-WoWI-ID: 26884
 ## IconTexture: Interface\AddOns\KeystoneRoulette\Textures\pinta
 
 src\Config.lua

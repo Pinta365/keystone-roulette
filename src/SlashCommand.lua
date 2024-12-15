@@ -15,8 +15,8 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
 
         print("Usage:")
         print("  " .. WrapTextInColorCode("/ksr", KSR.colors["YELLOW"]) .. " - Show options panel")
-        print("  " .. WrapTextInColorCode("/ksr roll", KSR.colors["YELLOW"]) .. " - Rolls for what key to run")
-        print("  " .. WrapTextInColorCode("/ksr roulette", KSR.colors["YELLOW"]) .. " - Rolls for what key to run")
+        print("  " .. WrapTextInColorCode("/ksr roll", KSR.colors["YELLOW"]) ..
+                " or " .. WrapTextInColorCode("/ksr roulette", KSR.colors["YELLOW"]) .. " - Roulette for what key to run")
         print("  " .. WrapTextInColorCode("/ksr help", KSR.colors["YELLOW"]) .. " - Show this help info")
         print("  " .. WrapTextInColorCode("/ksr reset", KSR.colors["YELLOW"]) .. " - Reset to default settings and reload UI")
         print(WrapTextInColorCode("-------------------------------------------------", KSR.colors["YELLOW"]))
