@@ -1,0 +1,18 @@
+## Interface: 100207
+## Name: KeystoneRoulette
+## Title: |cff45D388KeystoneRoulette|r
+## Notes: KeystoneRoulette
+## Author: Pinta365@Github
+## Version: 0.0.1
+## SavedVariables: KeystoneRouletteDB
+## X-Curse-Project-ID: 
+## X-Wago-ID: 
+## X-WoWI-ID: 
+## IconTexture: Interface\AddOns\KeystoneRoulette\Textures\pinta
+
+src\Config.lua
+src\Utilities.lua
+src\Keystone.lua
+src\SlashCommand.lua
+src\OptionsPanel.lua
+KeystoneRoulette.lua

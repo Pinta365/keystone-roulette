@@ -1,0 +1,5 @@
+ignore:
+  - .vscode
+  - .github
+  - README.md
+  - .pkgmeta
