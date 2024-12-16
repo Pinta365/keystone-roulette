@@ -11,6 +11,7 @@
 ## IconTexture: Interface\AddOns\KeystoneRoulette\Textures\pinta
 ## OptionalDependencies: WagoAnalytics
 
+libs\LibStub\LibStub.lua
 libs\WagoAnalytics\Shim.lua
 src\Config.lua
 src\Utilities.lua
