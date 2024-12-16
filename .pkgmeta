@@ -3,3 +3,7 @@ ignore:
   - .github
   - README.md
   - .pkgmeta
+externals:
+  libs/WagoAnalytics:
+    url: https://github.com/wagoio/WagoAnalyticsShim.git
+    branch: main

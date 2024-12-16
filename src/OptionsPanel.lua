@@ -63,4 +63,7 @@ KSR.InitOptions = function()
     local category, layout = Settings.RegisterCanvasLayoutCategory(optionsPanel, optionsPanel.name);
     Settings.RegisterAddOnCategory(category);
     KSR.settingsCategory = category
+
+    -- Collect analytics.
+    KSR.WagoAnalytics:IncrementCounter("OpenOptions")
 end

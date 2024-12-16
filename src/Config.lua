@@ -2,6 +2,10 @@
 
 local _, KSR = ...
 
+--Register the Wago Analytics lib.
+KSR.WagoAnalytics = LibStub("WagoAnalytics"):Register("b6mbVnKP")
+
+
 --Addon information parsed from TOC
 KSR.addon = {
     title = C_AddOns.GetAddOnMetadata("KeystoneRoulette", "Title"),

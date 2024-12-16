@@ -9,7 +9,9 @@
 ## X-Wago-ID: b6mbVnKP
 ## X-WoWI-ID: 26884
 ## IconTexture: Interface\AddOns\KeystoneRoulette\Textures\pinta
+## OptionalDependencies: WagoAnalytics
 
+libs\WagoAnalytics\Shim.lua
 src\Config.lua
 src\Utilities.lua
 src\Keystone.lua
