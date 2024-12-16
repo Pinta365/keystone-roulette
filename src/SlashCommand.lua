@@ -39,6 +39,8 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
         end
     elseif lowercaseArgs == "roll"  or lowercaseArgs == "roulette" then
         KSR.RouletteKeystone()
+    elseif lowercaseArgs == "roll dry"  or lowercaseArgs == "roulette dry" then
+        KSR.RouletteKeystone(true)
     else
         Settings.OpenToCategory(KSR.settingsCategory.ID)
     end

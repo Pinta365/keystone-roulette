@@ -38,6 +38,7 @@ end
 local function GetPartyKeystoneData()
     local keys = {}
     local openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
+    openRaidLib.RequestKeystoneDataFromParty()
     local keystoneData = openRaidLib.GetAllKeystonesInfo()
     if keystoneData then
         table.sort(keystoneData, function (t1, t2) return t1.level > t2.level end)
@@ -90,7 +91,8 @@ end
 ---Announces the chosen keystone to party chat and lists all available keystones.
 ---@param keys table table containing keystone information for all party members
 ---@param chosenKey table the keystone data that was randomly chosen
-local function AnnounceKeystone(keys, chosenKey)
+---@---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
+local function AnnounceKeystone(keys, chosenKey, dryrun)
     local playerName = chosenKey.player
     local dungeonName = chosenKey.dungeon
     local keystoneLevel = chosenKey.level
@@ -150,10 +152,10 @@ local function AnnounceKeystone(keys, chosenKey)
     if KeystoneRouletteDB.debug then
         print(message)
     else
-        if IsInGroup() then
-            SendChatMessage(message, "PARTY")
-        else
+        if dryrun or not IsInGroup() then
             print(message)
+        else
+            SendChatMessage(message, "PARTY")
         end
     end
 
@@ -169,22 +171,25 @@ local function AnnounceKeystone(keys, chosenKey)
     if KeystoneRouletteDB.debug then
         print(keyList)
     else
-        if IsInGroup() then
-            SendChatMessage(keyList, "PARTY")
-        else
+        if dryrun then
+            print(keyList)
+        elseif not IsInGroup() then
             print(keyList)
             print(WrapTextInColorCode("You should get some friends and form a party for this to be printed to everyone.", KSR.colors["YELLOW"]))
+        else
+            SendChatMessage(keyList, "PARTY")
         end
     end
 end
 
 ---Performs the keystone roulette, choosing a random keystone and announcing it to the party.
-KSR.RouletteKeystone = function()
+---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
+KSR.RouletteKeystone = function(dryrun)
     local keys = GetPartyKeystoneData()
     local chosenKey = ChooseRandomKeystone(keys)
 
     if chosenKey and keys then
-        AnnounceKeystone(keys, chosenKey)
+        AnnounceKeystone(keys, chosenKey, dryrun)
     else
         if not keys or #keys == 0 then
             if IsInGroup() then
