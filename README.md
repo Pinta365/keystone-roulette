@@ -22,12 +22,6 @@ You can download Keystone Roulette from these popular sources:
 * [Wago Addons](https://addons.wago.io/addons/keystone-roulette)
 * [CurseForge](https://www.curseforge.com/wow/addons/keystone-roulette) 
 
-## Dependencies
-
-Keystone Roulette requires the following addon to function:
-
-* **LibOpenRaid:** This library is included with some popular addons. For example Details! damage meter. If you have Details! installed, you already have LibOpenRaid.
-
 ## Slash Commands
 
 Keystone Roulette offers the following slash commands:
@@ -40,7 +34,6 @@ Keystone Roulette offers the following slash commands:
 
 If you encounter any issues, try these steps:
 
-* **Ensure LibOpenRaid is installed:** Keystone Roulette requires LibOpenRaid to function correctly.
 * **Type `/ksr reset`:** This will reset the addon settings to defaults, which might resolve some problems.
 * **Check for error messages:** Pay attention to any error messages in the chat frame, as they might provide clues about the issue.
 
