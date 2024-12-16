@@ -43,4 +43,20 @@ If you encounter any issues, try these steps:
 * **Ensure LibOpenRaid is installed:** Keystone Roulette requires LibOpenRaid to function correctly.
 * **Type `/ksr reset`:** This will reset the addon settings to defaults, which might resolve some problems.
 * **Check for error messages:** Pay attention to any error messages in the chat frame, as they might provide clues about the issue.
-* **Report issues:** If problems persist, please open an issue on the [GitHub repository](https://github.com/Pinta365/keystone-roulette/issues).
+
+## Debugging and Reporting Issues
+
+To help diagnose problems, Keystone Roulette has a debug mode that provides more detailed information. Here's how to enable it and report issues:
+
+1. **Enable debug mode:** Type `/ksr debug` in the chat frame. This will enable debug messages, which might reveal the cause of the issue. **Note:** While debug mode is enabled, messages will be printed to the console/chat window instead of the party chat.
+
+2. **Reproduce the error:** Try to reproduce the error you're experiencing while debug mode is enabled.
+
+3. **Gather debug output:** Look for debug messages in your chat window. These messages might contain clues about the problem.
+
+4. **Report the issue:** If you're still unable to resolve the issue, please open an issue on the [GitHub repository](https://github.com/Pinta365/keystone-roulette/issues) and include the following information:
+    * A description of the issue.
+    * Steps to reproduce the error.
+    * Any relevant debug output.
+
+By providing this information, you'll help me identify and fix bugs more efficiently, making Keystone Roulette even better!
