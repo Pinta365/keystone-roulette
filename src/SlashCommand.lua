@@ -7,19 +7,24 @@ SLASH_KeystoneRoulette_CMD1 = '/ksr'
 ---@param args string arguments following the slash command
 SlashCmdList["KeystoneRoulette_CMD"] = function(args)
     local lowercaseArgs = string.lower(args)
+    local line = "----------------------------------------------------------------------"
 
     if lowercaseArgs == "help" or lowercaseArgs == "info" or lowercaseArgs == "?" then
-        print(WrapTextInColorCode("-------------------------------------------------", KSR.colors["YELLOW"]))
+        print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
         print(KSR.addon.title .. " v" .. KSR.addon.version)
-        print(WrapTextInColorCode("-------------------------------------------------", KSR.colors["YELLOW"]))
+        if KeystoneRouletteDB.debug then
+            print(WrapTextInColorCode(" (debug mode active)", KSR.colors["RED"]))
+        end
+        print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
 
         print("Usage:")
         print("  " .. WrapTextInColorCode("/ksr", KSR.colors["YELLOW"]) .. " - Show options panel")
         print("  " .. WrapTextInColorCode("/ksr roll", KSR.colors["YELLOW"]) ..
                 " or " .. WrapTextInColorCode("/ksr roulette", KSR.colors["YELLOW"]) .. " - Roulette for what key to run")
         print("  " .. WrapTextInColorCode("/ksr help", KSR.colors["YELLOW"]) .. " - Show this help info")
+        print("  " .. WrapTextInColorCode("/ksr debug", KSR.colors["YELLOW"]) .. " - Toggles debug mode")
         print("  " .. WrapTextInColorCode("/ksr reset", KSR.colors["YELLOW"]) .. " - Reset to default settings and reload UI")
-        print(WrapTextInColorCode("-------------------------------------------------", KSR.colors["YELLOW"]))
+        print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
     elseif lowercaseArgs == "reset" then
         --Reset to default settings.
         KeystoneRouletteDB = CopyTable(KSR.addonDefaults)

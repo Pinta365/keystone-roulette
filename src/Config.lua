@@ -21,4 +21,5 @@ KSR.colors = {
     PRIMARY = "ff45D388",
     WHITE = "ffFFFFFF",
     YELLOW = "ffFFFF00",
+    RED = "ffFF0000",
 }
