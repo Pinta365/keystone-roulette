@@ -38,41 +38,36 @@ end
 local function GetPartyKeystoneData()
     local keys = {}
     local openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-    if openRaidLib then
-        local keystoneData = openRaidLib.GetAllKeystonesInfo()
-        if keystoneData then
-            table.sort(keystoneData, function (t1, t2) return t1.level > t2.level end)
+    local keystoneData = openRaidLib.GetAllKeystonesInfo()
+    if keystoneData then
+        table.sort(keystoneData, function (t1, t2) return t1.level > t2.level end)
+        local i = 0
+        for unitName, keystoneInfo in pairs(keystoneData) do
+            local name = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
+            local abbrName = AbbreviateDungeonName(keystoneInfo.challengeMapID)
 
-            local i = 0
-            for unitName, keystoneInfo in pairs(keystoneData) do
-                local name = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
-                local abbrName = AbbreviateDungeonName(keystoneInfo.challengeMapID)
-
-                if (UnitInParty(unitName) or unitName == UnitName("player")) and keystoneInfo.level > 0 then
-                    if not name then
-                        name = "Unknown dungeon"
-                        KSR.debugPrint(WrapTextInColorCode("Undefined dungeon found!", KSR.colors["RED"]))
-                        KSR.debugPrint(keystoneInfo)
-                    end
-
-                    if not abbrName then
-                        abbrName = "???"
-                        KSR.debugPrint(WrapTextInColorCode("Undefined dungeon abbreviation!", KSR.colors["RED"]))
-                        KSR.debugPrint(keystoneInfo)
-                    end
-
-                    i = i + 1
-                    keys[i] = {
-                        player = ({strsplit("-", unitName)})[1],
-                        dungeon = name,
-                        abbr = abbrName,
-                        level = keystoneInfo.level
-                    }
+            if (UnitInParty(unitName) or unitName == UnitName("player")) and keystoneInfo.level > 0 then
+                if not name then
+                    name = "Unknown dungeon"
+                    KSR.debugPrint(WrapTextInColorCode("Undefined dungeon found!", KSR.colors["RED"]))
+                    KSR.debugPrint(keystoneInfo)
                 end
+
+                if not abbrName then
+                    abbrName = "???"
+                    KSR.debugPrint(WrapTextInColorCode("Undefined dungeon abbreviation!", KSR.colors["RED"]))
+                    KSR.debugPrint(keystoneInfo)
+                end
+
+                i = i + 1
+                keys[i] = {
+                    player = ({strsplit("-", unitName)})[1],
+                    dungeon = name,
+                    abbr = abbrName,
+                    level = keystoneInfo.level
+                }
             end
         end
-    else
-        KSR.debugPrint("LibOpenRaid not found.")
     end
     return keys
 end
@@ -192,9 +187,17 @@ KSR.RouletteKeystone = function()
         AnnounceKeystone(keys, chosenKey)
     else
         if not keys or #keys == 0 then
-            SendChatMessage("Keystone Roulette: No keystones found in the party!", "PARTY")
+            if IsInGroup() then
+                SendChatMessage("Keystone Roulette: No keystones found in the party!", "PARTY")
+            else
+                print(WrapTextInColorCode("Keystone Roulette: No keystones found in the party!", KSR.colors["YELLOW"]))
+            end
         else
-            SendChatMessage("Keystone Roulette: An error occurred. Please try again.", "PARTY")
+            if IsInGroup() then
+                SendChatMessage("Keystone Roulette: An error occurred. Please try again.", "PARTY")
+            else
+                print(WrapTextInColorCode("Keystone Roulette: An error occurred. Please try again.", KSR.colors["RED"]))
+            end
         end
     end
 end
