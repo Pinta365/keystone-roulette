@@ -21,15 +21,21 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
         print("  " .. WrapTextInColorCode("/ksr", KSR.colors["YELLOW"]) .. " - Show options panel")
         print("  " .. WrapTextInColorCode("/ksr roll", KSR.colors["YELLOW"]) ..
                 " or " .. WrapTextInColorCode("/ksr roulette", KSR.colors["YELLOW"]) .. " - Roulette for what key to run")
+        print("  " .. WrapTextInColorCode("/ksr roll dry", KSR.colors["YELLOW"]) ..
+                " or " .. WrapTextInColorCode("/ksr roulette dry", KSR.colors["YELLOW"]) .. " - Simulate a roulette for what key to run")
         print("  " .. WrapTextInColorCode("/ksr help", KSR.colors["YELLOW"]) .. " - Show this help info")
         print("  " .. WrapTextInColorCode("/ksr debug", KSR.colors["YELLOW"]) .. " - Toggles debug mode")
         print("  " .. WrapTextInColorCode("/ksr reset", KSR.colors["YELLOW"]) .. " - Reset to default settings and reload UI")
         print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
     elseif lowercaseArgs == "reset" then
+        -- Collect analytics.
+        KSR.WagoAnalytics:IncrementCounter("CmdReset")
         --Reset to default settings.
         KeystoneRouletteDB = CopyTable(KSR.addonDefaults)
         ReloadUI()
     elseif lowercaseArgs == "debug" then
+        -- Collect analytics.
+        KSR.WagoAnalytics:IncrementCounter("CmdDebug")
         -- toggle KeystoneRouletteDB.debug
         KeystoneRouletteDB.debug = not KeystoneRouletteDB.debug
         if KeystoneRouletteDB.debug then
@@ -38,8 +44,12 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
             print(WrapTextInColorCode(KSR.addon.title .. " debug mode disabled.", KSR.colors["PRIMARY"]))
         end
     elseif lowercaseArgs == "roll"  or lowercaseArgs == "roulette" then
+        -- Collect analytics.
+        KSR.WagoAnalytics:IncrementCounter("CmdRoulette")
         KSR.RouletteKeystone()
     elseif lowercaseArgs == "roll dry"  or lowercaseArgs == "roulette dry" then
+        -- Collect analytics.
+        KSR.WagoAnalytics:IncrementCounter("CmdRouletteDry")
         KSR.RouletteKeystone(true)
     else
         Settings.OpenToCategory(KSR.settingsCategory.ID)

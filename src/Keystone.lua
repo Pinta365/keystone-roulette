@@ -38,7 +38,7 @@ end
 local function GetPartyKeystoneData()
     local keys = {}
     local openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-    openRaidLib.RequestKeystoneDataFromParty()
+    --openRaidLib.RequestKeystoneDataFromParty()
     local keystoneData = openRaidLib.GetAllKeystonesInfo()
     if keystoneData then
         table.sort(keystoneData, function (t1, t2) return t1.level > t2.level end)
@@ -72,8 +72,6 @@ local function GetPartyKeystoneData()
     end
     return keys
 end
-
-IsInGroup()
 
 ---Chooses a random keystone from a list of keystones.
 ---@param keys table table containing keystone information
