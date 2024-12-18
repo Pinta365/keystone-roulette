@@ -3,7 +3,7 @@
 ## Title: |cff45D388KeystoneRoulette|r
 ## Notes: KeystoneRoulette
 ## Author: Pinta365@Github
-## Version: 0.2.2
+## Version: 0.2.3
 ## SavedVariables: KeystoneRouletteDB
 ## X-Curse-Project-ID: 1159943
 ## X-Wago-ID: b6mbVnKP
