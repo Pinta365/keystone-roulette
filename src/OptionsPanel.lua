@@ -38,9 +38,9 @@ KSR.InitOptions = function()
      optionsPanel.cmdHelpText:SetText("Run '/ksr help' for console commands")
 
     -- Button for rouletting on a key in party chat.
-    local rollButton = createOptionButton(optionsPanel, "Roulette keystone in party", "rollButton", 16, -80, 200, 25)
+    local rollButton = createOptionButton(optionsPanel, "Open Roulette GUI", "rollButton", 16, -80, 200, 25)
     KSR.setOrHookHandler(rollButton, "OnClick", function()
-        KSR.RouletteKeystone()
+        KSR.ShowKeystoneGUI()
     end)
 
      -- Button for resetting to default settings.

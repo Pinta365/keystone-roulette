@@ -18,7 +18,8 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
         print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
 
         print("Usage:")
-        print("  " .. WrapTextInColorCode("/ksr", KSR.colors["YELLOW"]) .. " - Show options panel")
+        print("  " .. WrapTextInColorCode("/ksr", KSR.colors["YELLOW"]) .. " - Show roulette panel")
+        print("  " .. WrapTextInColorCode("/ksr options", KSR.colors["YELLOW"]) .. " - Show options panel")
         print("  " .. WrapTextInColorCode("/ksr roll", KSR.colors["YELLOW"]) ..
                 " or " .. WrapTextInColorCode("/ksr roulette", KSR.colors["YELLOW"]) .. " - Roulette for what key to run")
         print("  " .. WrapTextInColorCode("/ksr roll dry", KSR.colors["YELLOW"]) ..
@@ -51,7 +52,9 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
         -- Collect analytics.
         KSR.WagoAnalytics:IncrementCounter("CmdRouletteDry")
         KSR.RouletteKeystone(true)
-    else
+    elseif string.sub(lowercaseArgs, 1, 3) == "opt" then
         Settings.OpenToCategory(KSR.settingsCategory.ID)
+    else
+        KSR.ShowKeystoneGUI()
     end
 end

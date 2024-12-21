@@ -26,19 +26,16 @@ local function AbbreviateDungeonName(challengeMapID)
         [247] = "ML",    -- The MOTHERLODE!!
         [382] = "ToP",   -- Theater of Pain
         [370] = "Work",  -- Operation: Mechagon - Workshop
-        --One more?
-
-        -- Operation: Floodgate?
+        -- Operation: Floodgate
     }
     return abbreviations[challengeMapID]
 end
 
 ---Retrieves keystone data for all party members.
 ---@return table table containing keystone information for each party member with a keystone.
-local function GetPartyKeystoneData()
+KSR.GetPartyKeystoneData = function()
     local keys = {}
     local openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-    --openRaidLib.RequestKeystoneDataFromParty()
     local keystoneData = openRaidLib.GetAllKeystonesInfo()
     if keystoneData then
         table.sort(keystoneData, function (t1, t2) return t1.level > t2.level end)
@@ -76,7 +73,7 @@ end
 ---Chooses a random keystone from a list of keystones.
 ---@param keys table table containing keystone information
 ---@return table|nil randomly chosen keystone data, or nil if no keystones are found
-local function ChooseRandomKeystone(keys)
+KSR.ChooseRandomKeystone = function(keys)
     if #keys > 0 then
         local randomIndex = math.random(1, #keys)
         local chosenKey = keys[randomIndex]
@@ -90,7 +87,7 @@ end
 ---@param keys table table containing keystone information for all party members
 ---@param chosenKey table the keystone data that was randomly chosen
 ---@---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
-local function AnnounceKeystone(keys, chosenKey, dryrun)
+KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
     local playerName = chosenKey.player
     local dungeonName = chosenKey.dungeon
     local keystoneLevel = chosenKey.level
@@ -183,11 +180,11 @@ end
 ---Performs the keystone roulette, choosing a random keystone and announcing it to the party.
 ---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
 KSR.RouletteKeystone = function(dryrun)
-    local keys = GetPartyKeystoneData()
-    local chosenKey = ChooseRandomKeystone(keys)
+    local keys = KSR.GetPartyKeystoneData()
+    local chosenKey = KSR.ChooseRandomKeystone(keys)
 
     if chosenKey and keys then
-        AnnounceKeystone(keys, chosenKey, dryrun)
+        KSR.AnnounceKeystone(keys, chosenKey, dryrun)
     else
         if not keys or #keys == 0 then
             if IsInGroup() then
