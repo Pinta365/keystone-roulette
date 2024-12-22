@@ -45,6 +45,7 @@ rouletteFrame:SetPoint("TOP", 0, -80)
 local winningKeystoneText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 winningKeystoneText:SetPoint("TOP", rouletteFrame, "TOP", 0, 20)
 
+local keystoneTexts = {}
 -- Create a frame to hold the keystone list
 local keystoneListFrame = CreateFrame("Frame", "KeystoneRouletteListFrame", frame)
 keystoneListFrame:SetPoint("TOPLEFT", rouletteFrame, "TOPRIGHT", 15, 0)
@@ -52,25 +53,29 @@ keystoneListFrame:SetPoint("BOTTOMRIGHT", -15, 50)
 
 -- Function to populate the keystone list
 local function UpdateKeystoneList()
-    -- Clear existing keystones
-    local children = keystoneListFrame:GetChildren()
-    if children then
-        for child in pairs(children) do
-            child:Hide()
-        end
+    for _, keystoneText in ipairs(keystoneTexts) do
+        keystoneText:SetText("")
+        keystoneText:Hide()
     end
 
-    -- Create text objects for each keystone
     local keys = KSR.GetPartyKeystoneData()
     local spacing = 5
-    local currentY = -spacing
+
     for i, key in ipairs(keys) do
-        local keystoneText = keystoneListFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        keystoneText:SetPoint("TOPLEFT", 0, currentY)
+        if not keystoneTexts[i] then
+            keystoneTexts[i] = keystoneListFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        end
+
+        local keystoneText = keystoneTexts[i] 
+
+        if i == 1 then
+            keystoneText:SetPoint("TOPLEFT", 0, -spacing)
+        else
+            keystoneText:SetPoint("TOP", keystoneTexts[i-1], "BOTTOM", 0, -spacing)
+        end
+
         keystoneText:SetText(string.format("%s +%d", key.abbr, key.level))
         keystoneText:Show()
-
-        currentY = currentY - keystoneText:GetStringHeight() - spacing
     end
 end
 
@@ -117,8 +122,8 @@ closeButton:SetScript("OnClick", function()
 end)
 
 KSR.ShowKeystoneGUI = function()
-    if not frame:IsShown() then
-        UpdateKeystoneList()
-    end
+    --if not frame:IsShown() then        
+    --end
+    UpdateKeystoneList()
     frame:Show()
 end
