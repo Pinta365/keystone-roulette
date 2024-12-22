@@ -6,7 +6,8 @@ Tired of endless debates about which Mythic+ dungeon to run? Let fate decide wit
 
 ## Description
 
-Keystone Roulette adds a bit of excitement to your Mythic+ runs by randomly selecting a keystone from your party members. Simply type `/ksr roll` or `/ksr roulette`, and the addon will:
+Keystone Roulette adds a bit of excitement to your Mythic+ runs by randomly selecting a keystone from your party members.
+Type `/ksr` to open the GUI to roulette for a keystone to run or simply type `/ksr roll` or `/ksr roulette` to roll without GUI, and the addon will:
 
 * Gather keystone information from everyone in your group.
 * Choose a keystone at random.
