@@ -26,8 +26,11 @@ You can download Keystone Roulette from these popular sources:
 
 Keystone Roulette offers the following slash commands:
 
-* `/ksr`, `/ksr roll`, `/ksr roulette`:  Rolls for a random keystone from your party.
+* `/ksr`: Opens the roulette GUI to visually roll for a keystone.
+* `/ksr roll`, `/ksr roulette`:  Rolls for a random keystone from your party.
+* `/ksr options`: Opens the addon's options panel.
 * `/ksr help`: Displays a help message with usage instructions.
+* `/ksr debug`: Toggles debug mode.
 * `/ksr reset`: Resets the addon settings to their defaults and reloads the UI.
 
 ## Troubleshooting
