@@ -4,6 +4,8 @@ Tired of endless debates about which Mythic+ dungeon to run? Let fate decide wit
 
 ![Image of the keystone roulette](https://cdn.pinta.land/ksr/ksr.png)
 
+![Image of the keystone roulette GUI](https://cdn.pinta.land/ksr/ksrgui.png)
+
 ## Description
 
 Keystone Roulette adds a bit of excitement to your Mythic+ runs by randomly selecting a keystone from your party members.
