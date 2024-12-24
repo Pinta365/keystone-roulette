@@ -35,8 +35,13 @@ end
 ---@return table table containing keystone information for each party member with a keystone.
 KSR.GetPartyKeystoneData = function()
     local keys = {}
+    local keystoneData = {}
     local openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-    local keystoneData = openRaidLib.GetAllKeystonesInfo()
+
+    if (IsInGroup() and not IsInRaid()) or GetNumSubgroupMembers() == 0 then
+        keystoneData = openRaidLib.GetAllKeystonesInfo()
+    end
+
     if keystoneData then
         table.sort(keystoneData, function (t1, t2) return t1.level > t2.level end)
         local i = 0
