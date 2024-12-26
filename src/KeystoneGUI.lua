@@ -21,6 +21,9 @@ frame:SetBackdrop({
     edgeSize = 32,
     insets = { left = 11, right = 12, top = 12, bottom = 11 }
 })
+frame:HookScript("OnHide", function()
+    KSR.openRaidLib.UnregisterCallback(KSR, "KeystoneUpdate", "OnKeystoneUpdate")
+end)
 
 -- Add a title text
 local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -53,11 +56,6 @@ keystoneListFrame:SetPoint("BOTTOMRIGHT", -15, 50)
 
 -- Function to populate the keystone list
 local function UpdateKeystoneList()
-    for _, keystoneText in ipairs(keystoneTexts) do
-        keystoneText:SetText("")
-        keystoneText:Hide()
-    end
-
     local keys = KSR.GetPartyKeystoneData()
     local spacing = 5
 
@@ -66,7 +64,7 @@ local function UpdateKeystoneList()
             keystoneTexts[i] = keystoneListFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         end
 
-        local keystoneText = keystoneTexts[i] 
+        local keystoneText = keystoneTexts[i]
 
         if i == 1 then
             keystoneText:SetPoint("TOPLEFT", 0, -spacing)
@@ -76,6 +74,11 @@ local function UpdateKeystoneList()
 
         keystoneText:SetText(string.format("%s +%d", key.abbr, key.level))
         keystoneText:Show()
+    end
+
+    for i = #keys + 1, #keystoneTexts do
+        keystoneTexts[i]:SetText()
+        keystoneTexts[i]:Hide()
     end
 end
 
@@ -121,9 +124,14 @@ closeButton:SetScript("OnClick", function()
     winningKeystoneText:SetText("")
 end)
 
+KSR.OnKeystoneUpdate = function(unitName, keystoneInfo, _)
+    if (UnitInParty(unitName) or unitName == UnitName("player")) and keystoneInfo.level > 0 then
+        UpdateKeystoneList()
+    end
+end
+
 KSR.ShowKeystoneGUI = function()
-    --if not frame:IsShown() then        
-    --end
+    KSR.openRaidLib.RegisterCallback(KSR, "KeystoneUpdate", "OnKeystoneUpdate")
     UpdateKeystoneList()
     frame:Show()
 end

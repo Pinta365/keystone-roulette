@@ -2,7 +2,6 @@
 
 local _, KSR = ...
 
-
 ---Abbreviates a dungeon name using its map ID.
 ---@param challengeMapID number the challenge map ID of the dungeon
 ---@return string the abbreviated dungeon name
@@ -36,10 +35,9 @@ end
 KSR.GetPartyKeystoneData = function()
     local keys = {}
     local keystoneData = {}
-    local openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
     if (IsInGroup() and not IsInRaid()) or GetNumSubgroupMembers() == 0 then
-        keystoneData = openRaidLib.GetAllKeystonesInfo()
+        keystoneData = KSR.openRaidLib.GetAllKeystonesInfo()
     end
 
     if keystoneData then

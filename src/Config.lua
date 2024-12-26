@@ -5,6 +5,8 @@ local _, KSR = ...
 --Register the Wago Analytics lib.
 KSR.WagoAnalytics = LibStub("WagoAnalytics"):Register("b6mbVnKP")
 
+--OpenRaid Lib
+KSR.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
 --Addon information parsed from TOC
 KSR.addon = {
