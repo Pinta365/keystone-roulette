@@ -25,7 +25,7 @@ local function AbbreviateDungeonName(challengeMapID)
         [247] = "ML",    -- The MOTHERLODE!!
         [382] = "ToP",   -- Theater of Pain
         [370] = "Work",  -- Operation: Mechagon - Workshop
-        -- Operation: Floodgate
+        [525] = "FG",    -- Operation: Floodgate
     }
     return abbreviations[challengeMapID]
 end
