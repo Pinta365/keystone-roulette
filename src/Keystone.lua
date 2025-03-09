@@ -9,23 +9,23 @@ local function AbbreviateDungeonName(challengeMapID)
     local abbreviations = {
         --The War Within S1
         [501] = "SV",   -- The Stonevault
-        [502] = "CoT",  -- City of Threads
-        [503] = "Ara",  -- Ara-Kara, City of Echoes
+        [502] = "COT",  -- City of Threads
+        [503] = "ARA",  -- Ara-Kara, City of Echoes
         [505] = "DB",   -- The Dawnbreaker
-        [353] = "SoB",  -- Siege of Boralus
-        [375] = "MoTS", -- Mists of Tirna Scithe
+        [353] = "SOB",  -- Siege of Boralus
+        [375] = "MOTS", -- Mists of Tirna Scithe
         [376] = "NW",   -- Necrotic Wake
         [507] = "GB",   -- Grim Batol
 
         --The War Within S2
-        [499] = "PoSF",  -- Priory of the Sacred Flame
-        [500] = "Rook",  -- The Rookery          
-        [504] = "DC",    -- Darkflame Cleft
-        [506] = "CM",    -- Cinderbrew Meadery
+        [499] = "PSF",  -- Priory of the Sacred Flame
+        [500] = "ROOK",  -- The Rookery          
+        [504] = "DFC",    -- Darkflame Cleft
+        [506] = "BREW",    -- Cinderbrew Meadery
         [247] = "ML",    -- The MOTHERLODE!!
-        [382] = "ToP",   -- Theater of Pain
-        [370] = "Work",  -- Operation: Mechagon - Workshop
-        [525] = "FG",    -- Operation: Floodgate
+        [382] = "TOP",   -- Theater of Pain
+        [370] = "WORK",  -- Operation: Mechagon - Workshop
+        [525] = "FLOOD",    -- Operation: Floodgate
     }
     return abbreviations[challengeMapID]
 end
