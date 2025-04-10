@@ -126,7 +126,9 @@ KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
         "needs your help champion!",
         "has been selected, but Old Brann got your back!",
         "fast in, fast out!",
-        "has nothing to throw at us, while we have family."
+        "beckons! Answer the call!",
+        "because 'fun' is subjective, right?",
+        "is the next chapter in your epic saga!"
     }
     table.insert(announcementParts, phrases[math.random(1, #phrases)])
 
