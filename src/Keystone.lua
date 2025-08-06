@@ -8,24 +8,35 @@ local _, KSR = ...
 local function AbbreviateDungeonName(challengeMapID)
     local abbreviations = {
         --The War Within S1
-        [501] = "SV",   -- The Stonevault
-        [502] = "COT",  -- City of Threads
-        [503] = "ARA",  -- Ara-Kara, City of Echoes
-        [505] = "DB",   -- The Dawnbreaker
-        [353] = "SOB",  -- Siege of Boralus
-        [375] = "MOTS", -- Mists of Tirna Scithe
-        [376] = "NW",   -- Necrotic Wake
-        [507] = "GB",   -- Grim Batol
+        [501] = "SV",     -- The Stonevault
+        [502] = "COT",    -- City of Threads
+        [503] = "ARA",    -- Ara-Kara, City of Echoes
+        [505] = "DB",     -- The Dawnbreaker
+        [353] = "SOB",    -- Siege of Boralus
+        [375] = "MOTS",   -- Mists of Tirna Scithe
+        [376] = "NW",     -- Necrotic Wake
+        [507] = "GB",     -- Grim Batol
 
         --The War Within S2
-        [499] = "PSF",  -- Priory of the Sacred Flame
-        [500] = "ROOK",  -- The Rookery          
+        [499] = "PSF",    -- Priory of the Sacred Flame
+        [500] = "ROOK",   -- The Rookery          
         [504] = "DFC",    -- Darkflame Cleft
-        [506] = "BREW",    -- Cinderbrew Meadery
-        [247] = "ML",    -- The MOTHERLODE!!
-        [382] = "TOP",   -- Theater of Pain
-        [370] = "WORK",  -- Operation: Mechagon - Workshop
-        [525] = "FLOOD",    -- Operation: Floodgate
+        [506] = "BREW",   -- Cinderbrew Meadery
+        [247] = "ML",     -- The MOTHERLODE!!
+        [382] = "TOP",    -- Theater of Pain
+        [370] = "WORK",   -- Operation: Mechagon - Workshop
+        [525] = "FLOOD",  -- Operation: Floodgate
+
+        -- The War Within S3, New IDs
+        [542] = "ED",     --Eco-Dome Al'dani
+        [378] = "HoA",    --Halls of Atonement
+        [391] = "T1:SoW", --Tazavesh: Streets of Wonder 
+        [392] = "T2:SG",  --Tazavesh: So'leah's Gambit 
+        -- The War Within S3, Already added
+        --Dawnbreaker (Season 1)
+        --Ara-Kara, City of Echoes (Season 1)
+        --Operation: Floodgate (Season 2)
+        --Priory of Sacred Flame (Season 2)
     }
     return abbreviations[challengeMapID]
 end
