@@ -1,7 +1,7 @@
-## Interface: 110107, 110200
+## Interface: 110200
 ## Name: KeystoneRoulette
 ## Title: |cff45D388KeystoneRoulette|r
-## Notes: KeystoneRoulette
+## Notes: Adds a bit of excitement to your Mythic+ runs by randomly selecting a keystone from your party members.
 ## Author: Pinta365@Github
 ## Version: 1.0.1
 ## SavedVariables: KeystoneRouletteDB
@@ -10,6 +10,17 @@
 ## X-WoWI-ID: 26884
 ## IconTexture: Interface\AddOns\KeystoneRoulette\Textures\pinta
 ## OptionalDependencies: WagoAnalytics
+## Category: Dungeons & Raids
+## Category-deDE: Dungeons & Schlachtzüge
+## Category-esES: Mazmorras y bandas
+## Category-esMX: Calabozos y bandas
+## Category-frFR: Donjons et raids
+## Category-itIT: Spedizioni e incursioni
+## Category-koKR: 던전 및 공격대
+## Category-ptBR: Masmorras e Raides
+## Category-ruRU: Подземелья и рейды
+## Category-zhCN: 地下城和团队副本
+## Category-zhTW: 地城與團隊
 
 embeds.xml
 src\Config.lua
