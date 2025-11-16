@@ -22,7 +22,9 @@ frame:SetBackdrop({
     insets = { left = 11, right = 12, top = 12, bottom = 11 }
 })
 frame:HookScript("OnHide", function()
-    KSR.openRaidLib.UnregisterCallback(KSR, "KeystoneUpdate", "OnKeystoneUpdate")
+    if KSR.IsLibOpenRaidAvailable() then
+        KSR.openRaidLib.UnregisterCallback(KSR, "KeystoneUpdate", "OnKeystoneUpdate")
+    end
 end)
 
 -- Add a title text
@@ -130,8 +132,24 @@ KSR.OnKeystoneUpdate = function(unitName, keystoneInfo, _)
     end
 end
 
+-- Callback for custom sync updates
+KSR.OnKeystoneSyncUpdate = function()
+    if frame:IsShown() then
+        UpdateKeystoneList()
+    end
+end
+
 KSR.ShowKeystoneGUI = function()
-    KSR.openRaidLib.RegisterCallback(KSR, "KeystoneUpdate", "OnKeystoneUpdate")
+    -- Register LibOpenRaid callback if available
+    if KSR.IsLibOpenRaidAvailable() then
+        KSR.openRaidLib.RegisterCallback(KSR, "KeystoneUpdate", "OnKeystoneUpdate")
+    end
+    
+    -- Request keystones if using fallback sync
+    if not KSR.IsLibOpenRaidAvailable() and KSR.GetSyncKeystoneData then
+        KSR.GetSyncKeystoneData()
+    end
+    
     UpdateKeystoneList()
     frame:Show()
 end

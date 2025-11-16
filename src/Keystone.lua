@@ -44,21 +44,83 @@ end
 ---Retrieves keystone data for all party members.
 ---@return table table containing keystone information for each party member with a keystone.
 KSR.GetPartyKeystoneData = function()
+    KSR.debugPrint("GetPartyKeystoneData: Called")
     local keys = {}
     local keystoneData = {}
+    local useFallback = false
 
-    if (IsInGroup() and not IsInRaid()) or GetNumSubgroupMembers() == 0 then
-        keystoneData = KSR.openRaidLib.GetAllKeystonesInfo()
+    -- Try LibOpenRaid first if available
+    if KSR.IsLibOpenRaidAvailable() then
+        KSR.debugPrint("GetPartyKeystoneData: LibOpenRaid is available, trying to use it")
+        if (IsInGroup() and not IsInRaid()) or GetNumSubgroupMembers() == 0 then
+            local success, result = pcall(function()
+                return KSR.openRaidLib.GetAllKeystonesInfo()
+            end)
+            
+            if success and result then
+                keystoneData = result
+                KSR.debugPrint("GetPartyKeystoneData: LibOpenRaid returned data")
+            else
+                useFallback = true
+                KSR.debugPrint(WrapTextInColorCode("LibOpenRaid failed, using fallback sync", KSR.colors["YELLOW"]))
+            end
+        end
+    else
+        useFallback = true
+        KSR.debugPrint(WrapTextInColorCode("LibOpenRaid not available, using fallback sync", KSR.colors["YELLOW"]))
+    end
+
+    -- Fallback to custom sync if LibOpenRaid is not available or failed
+    if useFallback then
+        if KSR.GetSyncKeystoneData then
+            keystoneData = KSR.GetSyncKeystoneData()
+            local dataCount = 0
+            if keystoneData then
+                for _ in pairs(keystoneData) do
+                    dataCount = dataCount + 1
+                end
+            end
+            KSR.debugPrint("GetPartyKeystoneData: Got sync data, " .. dataCount .. " entries")
+        else
+            KSR.debugPrint("GetPartyKeystoneData: GetSyncKeystoneData function not available")
+        end
     end
 
     if keystoneData then
-        table.sort(keystoneData, function (t1, t2) return t1.level > t2.level end)
-        local i = 0
+        local keystoneArray = {}
         for unitName, keystoneInfo in pairs(keystoneData) do
+            if keystoneInfo and keystoneInfo.challengeMapID and keystoneInfo.level then
+                table.insert(keystoneArray, {
+                    unitName = unitName,
+                    challengeMapID = keystoneInfo.challengeMapID,
+                    level = keystoneInfo.level
+                })
+            end
+        end
+        
+        KSR.debugPrint("GetPartyKeystoneData: Converted to array, " .. #keystoneArray .. " keystones")
+        
+        table.sort(keystoneArray, function (t1, t2) return t1.level > t2.level end)
+        
+        local i = 0
+        local playerName = UnitName("player")
+        local playerRealm = GetRealmName()
+        local playerFullName = playerName .. "-" .. playerRealm
+        
+        for _, entry in ipairs(keystoneArray) do
+            local unitName = entry.unitName
+            local keystoneInfo = {
+                challengeMapID = entry.challengeMapID,
+                level = entry.level
+            }
+            
             local name = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
             local abbrName = AbbreviateDungeonName(keystoneInfo.challengeMapID)
 
-            if (UnitInParty(unitName) or unitName == UnitName("player")) and keystoneInfo.level > 0 then
+            local isPlayer = (unitName == playerName) or (unitName == playerFullName) or 
+                            (string.find(unitName, "^" .. playerName .. "-") ~= nil)
+            
+            if (UnitInParty(unitName) or isPlayer) and keystoneInfo.level > 0 then
                 if not name then
                     name = "Unknown dungeon"
                     KSR.debugPrint(WrapTextInColorCode("Undefined dungeon found!", KSR.colors["RED"]))
@@ -78,9 +140,14 @@ KSR.GetPartyKeystoneData = function()
                     abbr = abbrName,
                     level = keystoneInfo.level
                 }
+                KSR.debugPrint("GetPartyKeystoneData: Added keystone " .. i .. " - " .. keys[i].player .. ": " .. keys[i].dungeon .. " +" .. keys[i].level)
             end
         end
+    else
+        KSR.debugPrint("GetPartyKeystoneData: No keystoneData returned")
     end
+    
+    KSR.debugPrint("GetPartyKeystoneData: Returning " .. #keys .. " keystones")
     return keys
 end
 
@@ -135,11 +202,29 @@ KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
         "is the next stop on this pain train.",
         "well who expected to go back here for the millionth time!",
         "needs your help champion!",
-        "has been selected, but Old Brann got your back!",
         "fast in, fast out!",
         "beckons! Answer the call!",
         "because 'fun' is subjective, right?",
-        "is the next chapter in your epic saga!"
+        "is the next chapter in your epic saga!",
+        "has been RNG'd into existence!",
+        "is your destiny... or at least your next 30 minutes!",
+        "awaits! May the affixes be ever in your favor!",
+        "has been chosen! Time to prove you're not just a pretty transmog!",
+        "is calling! Better answer before it calls someone else!",
+        "has been selected! No refunds, no exchanges!",
+        "is your next challenge! Remember: dying is just a minor inconvenience!",
+        "has been picked! Let's hope your healer is awake!",
+        "awaits your arrival! Bring snacks, it might take a while!",
+        "has been chosen! May your interrupts be many and your deaths be few!",
+        "is ready! Time to show those mobs who's boss!",
+        "has been selected! Good luck, you're gonna need it!",
+        "awaits! Don't forget to bring your A-game... and maybe a rez!",
+        "has been picked! Time to make some memories (and possibly some mistakes)!",
+        "is your next adventure! Let's make it count!",
+        "has been chosen! May the odds be ever in your favor!",
+        "has been selected! Remember: it's not about the destination, it's about the wipes along the way!",
+        "is ready! Time to show Azeroth what you're made of!",
+        "has been picked! Let's turn this into a success story!"
     }
     table.insert(announcementParts, phrases[math.random(1, #phrases)])
 
