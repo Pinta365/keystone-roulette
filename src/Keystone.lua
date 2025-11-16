@@ -37,6 +37,21 @@ local function AbbreviateDungeonName(challengeMapID)
         --Ara-Kara, City of Echoes (Season 1)
         --Operation: Floodgate (Season 2)
         --Priory of Sacred Flame (Season 2)
+
+        --Legion Remix
+        [199] = "BRH",    -- Black Rook Hold
+        [233] = "COEN",   -- Cathedral of Eternal Night
+        [210] = "COS",    -- Court of Stars
+        [198] = "DHT",    -- Darkheart Thicket
+        [197] = "EOA",    -- Eye of Azshara
+        [200] = "HOV",    -- Halls of Valor
+        [208] = "MOS",    -- Maw of Souls
+        [206] = "NL",     -- Neltharion's Lair
+        [227] = "KARA:L", -- Return to Karazhan: Lower
+        [234] = "KARA:U", -- Return to Karazhan: Upper
+        [239] = "SOT",    -- Seat of the Triumvirate
+        [209] = "ARC",    -- The Arcway
+        [207] = "VOTW",   -- Vault of the Wardens
     }
     return abbreviations[challengeMapID]
 end
