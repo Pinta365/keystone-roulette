@@ -35,15 +35,15 @@ title:SetText("Keystone Roulette")
 -- Create the roulette wheel texture
 local rouletteWheel = frame:CreateTexture(nil, "BACKGROUND")
 rouletteWheel:SetDrawLayer("BACKGROUND", 1)
-rouletteWheel:SetTexture("Interface\\AddOns\\KeystoneRoulette\\Textures\\wheel.blp")
+rouletteWheel:SetTexture("Interface\\AddOns\\KeystoneRoulette\\Textures\\wheel.png")
 rouletteWheel:SetSize(128, 128)
-rouletteWheel:SetPoint("TOP", 0, -80)
+rouletteWheel:SetPoint("TOP", 0, -100)
 
 -- Create the roulette frame texture
 local rouletteFrame = frame:CreateTexture(nil, "BACKGROUND")
 rouletteFrame:SetDrawLayer("BACKGROUND", 2)
-rouletteFrame:SetTexture("Interface\\AddOns\\KeystoneRoulette\\Textures\\wheelframe.blp")
-rouletteFrame:SetSize(128, 128)
+rouletteFrame:SetTexture("Interface\\AddOns\\KeystoneRoulette\\Textures\\wheelframe.png")
+rouletteFrame:SetSize(128, 147)
 rouletteFrame:SetPoint("TOP", 0, -80)
 
 -- Create a text object to display the winning keystone
