@@ -5,9 +5,5 @@ ignore:
   - .pkgmeta
 externals:
   libs/WagoAnalytics: https://github.com/wagoio/WagoAnalyticsShim
-  libs/LibOpenRaid: https://github.com/Tercioo/Open-Raid-Library
-  libs/AceComm-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceComm-3.0
-  libs/AceSerializer-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceSerializer-3.0
-  libs/CallbackHandler-1.0: https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0
   libs/LibStub: https://repos.curseforge.com/wow/libstub/trunk
-  libs/LibDeflate: https://github.com/SafeteeWoW/LibDeflate
+  libs/LibKeystone: https://github.com/BigWigsMods/LibKeystone.git/LibKeystone

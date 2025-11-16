@@ -25,7 +25,6 @@
 embeds.xml
 src\Config.lua
 src\Utilities.lua
-src\KeystoneSync.lua
 src\KeystoneGUI.lua
 src\Keystone.lua
 src\SlashCommand.lua

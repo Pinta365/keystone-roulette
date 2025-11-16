@@ -1,8 +1,4 @@
 .vscode/
 libs/WagoAnalytics
-libs/LibOpenRaid
-libs/AceComm-3.0
-libs/AceSerializer-3.0
-libs/CallbackHandler-1.0
-libs/LibDeflate
+libs/LibKeystone
 libs/LibStub

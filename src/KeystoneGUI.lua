@@ -140,14 +140,16 @@ KSR.OnKeystoneSyncUpdate = function()
 end
 
 KSR.ShowKeystoneGUI = function()
-    -- Register LibOpenRaid callback if available
+    if KSR.IsLibKeystoneAvailable() then
+        -- Request keystones from party
+        if IsInGroup() and not IsInRaid() then
+            KSR.libKeystone.Request("PARTY")
+            KSR.debugPrint("ShowKeystoneGUI: Requested keystones from LibKeystone (PARTY)")
+        end
+    end
+
     if KSR.IsLibOpenRaidAvailable() then
         KSR.openRaidLib.RegisterCallback(KSR, "KeystoneUpdate", "OnKeystoneUpdate")
-    end
-    
-    -- Request keystones if using fallback sync
-    if not KSR.IsLibOpenRaidAvailable() and KSR.GetSyncKeystoneData then
-        KSR.GetSyncKeystoneData()
     end
     
     UpdateKeystoneList()

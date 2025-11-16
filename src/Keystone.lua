@@ -41,48 +41,107 @@ local function AbbreviateDungeonName(challengeMapID)
     return abbreviations[challengeMapID]
 end
 
+-- Helper function to normalize player name (extract name part before "-")
+local function NormalizePlayerName(playerName)
+    if not playerName then
+        return nil
+    end
+    -- Extract name part (before "-")
+    local namePart = ({strsplit("-", playerName)})[1]
+    return namePart
+end
+
+-- Helper function to check if a player already exists in keystone data
+local function PlayerExistsInData(keystoneData, playerName, challengeMapID, level)
+    local normalizedName = NormalizePlayerName(playerName)
+    if not normalizedName then
+        return false
+    end
+    
+    for existingName, existingInfo in pairs(keystoneData) do
+        local existingNormalizedName = NormalizePlayerName(existingName)
+        -- Check if name matches and keystone info matches (same player, same keystone)
+        if existingNormalizedName == normalizedName and 
+           existingInfo.challengeMapID == challengeMapID and 
+           existingInfo.level == level then
+            return true
+        end
+    end
+    
+    return false
+end
+
+-- LibKeystone callback handler
+KSR.OnLibKeystoneData = function(keyLevel, keyMapID, playerRating, playerName, channel)
+    KSR.debugPrint("OnLibKeystoneData: Received - " .. playerName .. ": " .. keyMapID .. " +" .. keyLevel .. " (channel: " .. channel .. ")")
+    
+    local fullName = playerName
+    -- Add realm if not present
+    if not string.find(fullName, "-") then
+        local realm = GetRealmName()
+        fullName = fullName .. "-" .. realm
+    end
+    
+    KSR.libKeystoneData[fullName] = {
+        challengeMapID = keyMapID,
+        level = keyLevel
+    }
+    
+    if KSR.OnKeystoneSyncUpdate then
+        KSR.OnKeystoneSyncUpdate()
+    end
+end
+
 ---Retrieves keystone data for all party members.
 ---@return table table containing keystone information for each party member with a keystone.
 KSR.GetPartyKeystoneData = function()
     KSR.debugPrint("GetPartyKeystoneData: Called")
     local keys = {}
     local keystoneData = {}
-    local useFallback = false
 
-    -- Try LibOpenRaid first if available
+    -- Get data from LibKeystone if available
+    if KSR.IsLibKeystoneAvailable() then
+        KSR.debugPrint("GetPartyKeystoneData: LibKeystone is available, checking stored data")
+        
+        local dataCount = 0
+        if KSR.libKeystoneData then
+            for _ in pairs(KSR.libKeystoneData) do
+                dataCount = dataCount + 1
+            end
+        end
+        
+        if dataCount > 0 then
+            for playerName, keystoneInfo in pairs(KSR.libKeystoneData) do
+                keystoneData[playerName] = keystoneInfo
+            end
+            KSR.debugPrint("GetPartyKeystoneData: LibKeystone returned " .. dataCount .. " entries")
+        else
+            KSR.debugPrint("GetPartyKeystoneData: LibKeystone has no stored data yet")
+        end
+    end
+
+    -- Also get data from LibOpenRaid if available (merge with LibKeystone data)
     if KSR.IsLibOpenRaidAvailable() then
-        KSR.debugPrint("GetPartyKeystoneData: LibOpenRaid is available, trying to use it")
+        KSR.debugPrint("GetPartyKeystoneData: LibOpenRaid is available, merging data")
         if (IsInGroup() and not IsInRaid()) or GetNumSubgroupMembers() == 0 then
             local success, result = pcall(function()
                 return KSR.openRaidLib.GetAllKeystonesInfo()
             end)
             
             if success and result then
-                keystoneData = result
-                KSR.debugPrint("GetPartyKeystoneData: LibOpenRaid returned data")
-            else
-                useFallback = true
-                KSR.debugPrint(WrapTextInColorCode("LibOpenRaid failed, using fallback sync", KSR.colors["YELLOW"]))
-            end
-        end
-    else
-        useFallback = true
-        KSR.debugPrint(WrapTextInColorCode("LibOpenRaid not available, using fallback sync", KSR.colors["YELLOW"]))
-    end
-
-    -- Fallback to custom sync if LibOpenRaid is not available or failed
-    if useFallback then
-        if KSR.GetSyncKeystoneData then
-            keystoneData = KSR.GetSyncKeystoneData()
-            local dataCount = 0
-            if keystoneData then
-                for _ in pairs(keystoneData) do
-                    dataCount = dataCount + 1
+                local openRaidCount = 0
+                for playerName, keystoneInfo in pairs(result) do
+                    if not PlayerExistsInData(keystoneData, playerName, keystoneInfo.challengeMapID, keystoneInfo.level) then
+                        keystoneData[playerName] = keystoneInfo
+                        openRaidCount = openRaidCount + 1
+                    else
+                        KSR.debugPrint("GetPartyKeystoneData: Skipping duplicate from LibOpenRaid - " .. playerName .. " (already in LibKeystone data)")
+                    end
                 end
+                KSR.debugPrint("GetPartyKeystoneData: LibOpenRaid added " .. openRaidCount .. " additional entries")
+            else
+                KSR.debugPrint(WrapTextInColorCode("LibOpenRaid failed", KSR.colors["YELLOW"]))
             end
-            KSR.debugPrint("GetPartyKeystoneData: Got sync data, " .. dataCount .. " entries")
-        else
-            KSR.debugPrint("GetPartyKeystoneData: GetSyncKeystoneData function not available")
         end
     end
 
@@ -143,11 +202,9 @@ KSR.GetPartyKeystoneData = function()
                 KSR.debugPrint("GetPartyKeystoneData: Added keystone " .. i .. " - " .. keys[i].player .. ": " .. keys[i].dungeon .. " +" .. keys[i].level)
             end
         end
-    else
-        KSR.debugPrint("GetPartyKeystoneData: No keystoneData returned")
     end
     
-    KSR.debugPrint("GetPartyKeystoneData: Returning " .. #keys .. " keystones")
+    KSR.debugPrint("GetPartyKeystoneData: Returning " .. #keys .. " keystones (merged from LibKeystone and LibOpenRaid)")
     return keys
 end
 
