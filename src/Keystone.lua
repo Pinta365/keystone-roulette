@@ -52,6 +52,13 @@ local function AbbreviateDungeonName(challengeMapID)
         [239] = "SOT",    -- Seat of the Triumvirate
         [209] = "ARC",    -- The Arcway
         [207] = "VOTW",   -- Vault of the Wardens
+
+        --Midnight Beta Test
+        [402] = "AA",     -- Algeth'ar Academy
+        [161] = "SKY",    -- Skyreach
+        [556] = "POS",    -- Pit of Saron
+        -- Seat of the Triumvirate (already added)
+
     }
     return abbreviations[challengeMapID]
 end
