@@ -3,7 +3,6 @@
 
 local addonName, KSR = ...
 
----Helper function to create option button.
 ---@param parent optionsPanel
 ---@param displayText string Text associated to options item
 ---@param name string name of item
@@ -21,45 +20,37 @@ local function createOptionButton(parent, displayText, name, x, y, w, h)
     return button
 end
 
----Create the options panel
 KSR.InitOptions = function()
     ---@class optionsPanel : Frame
     local optionsPanel = CreateFrame("Frame", "AddonOptionsPanel", InterfaceOptionsFramePanelContainer)
     optionsPanel.name = "Keystone Roulette"
 
-     -- Header    
-     optionsPanel.optionsHeaderText = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
-     optionsPanel.optionsHeaderText:SetPoint("TOPLEFT", 16, -10)
-     optionsPanel.optionsHeaderText:SetText("Options for Keystone Roulette")
+    optionsPanel.optionsHeaderText = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
+    optionsPanel.optionsHeaderText:SetPoint("TOPLEFT", 16, -10)
+    optionsPanel.optionsHeaderText:SetText("Options for Keystone Roulette")
 
-     -- Command hint
-     optionsPanel.cmdHelpText = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-     optionsPanel.cmdHelpText:SetPoint("TOPLEFT", 16, -30)
-     optionsPanel.cmdHelpText:SetText("Run '/ksr help' for console commands")
+    optionsPanel.cmdHelpText = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    optionsPanel.cmdHelpText:SetPoint("TOPLEFT", 16, -30)
+    optionsPanel.cmdHelpText:SetText("Run '/ksr help' for console commands")
 
-    -- Button for rouletting on a key in party chat.
     local rollButton = createOptionButton(optionsPanel, "Open Roulette GUI", "rollButton", 16, -80, 200, 25)
     KSR.setOrHookHandler(rollButton, "OnClick", function()
         KSR.ShowKeystoneGUI()
     end)
 
-     -- Button for resetting to default settings.
-     local resetButton = createOptionButton(optionsPanel, "Reset to default settings", "resetButton", 16, -120, 200, 25)
-     KSR.setOrHookHandler(resetButton, "OnClick", function()
+    local resetButton = createOptionButton(optionsPanel, "Reset to default settings", "resetButton", 16, -120, 200, 25)
+    KSR.setOrHookHandler(resetButton, "OnClick", function()
         KeystoneRouletteDB = CopyTable(KSR.addonDefaults)
         print(WrapTextInColorCode(KSR.addon.title .. " is reset to default settings.", KSR.colors["PRIMARY"]))
-     end)
+    end)
 
-     -- Print version number.
-     optionsPanel.versionInfo = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-     optionsPanel.versionInfo:SetPoint("BOTTOMRIGHT", optionsPanel, -10, 10)
-     optionsPanel.versionInfo:SetText(addonName .. " v" .. KSR.addon.version)
+    optionsPanel.versionInfo = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    optionsPanel.versionInfo:SetPoint("BOTTOMRIGHT", optionsPanel, -10, 10)
+    optionsPanel.versionInfo:SetText(addonName .. " v" .. KSR.addon.version)
 
-    --Add panel to interface
     local category, layout = Settings.RegisterCanvasLayoutCategory(optionsPanel, optionsPanel.name);
     Settings.RegisterAddOnCategory(category);
     KSR.settingsCategory = category
 
-    -- Collect analytics.
     KSR.WagoAnalytics:IncrementCounter("OpenOptions")
 end

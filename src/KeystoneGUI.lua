@@ -2,7 +2,6 @@
 
 local _, KSR = ...
 
--- Create the main frame
 local frame = CreateFrame("Frame", "KeystoneRouletteGUI", UIParent, "BackdropTemplate")
 frame:SetFrameStrata("HIGH")
 frame:Hide()
@@ -27,36 +26,30 @@ frame:HookScript("OnHide", function()
     end
 end)
 
--- Add a title text
 local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 title:SetPoint("TOP", 0, -15)
 title:SetText("Keystone Roulette")
 
--- Create the roulette wheel texture
 local rouletteWheel = frame:CreateTexture(nil, "BACKGROUND")
 rouletteWheel:SetDrawLayer("BACKGROUND", 1)
 rouletteWheel:SetTexture("Interface\\AddOns\\KeystoneRoulette\\Textures\\wheel.png")
 rouletteWheel:SetSize(128, 128)
 rouletteWheel:SetPoint("TOP", 0, -100)
 
--- Create the roulette frame texture
 local rouletteFrame = frame:CreateTexture(nil, "BACKGROUND")
 rouletteFrame:SetDrawLayer("BACKGROUND", 2)
 rouletteFrame:SetTexture("Interface\\AddOns\\KeystoneRoulette\\Textures\\wheelframe.png")
 rouletteFrame:SetSize(128, 147)
 rouletteFrame:SetPoint("TOP", 0, -80)
 
--- Create a text object to display the winning keystone
 local winningKeystoneText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 winningKeystoneText:SetPoint("TOP", rouletteFrame, "TOP", 0, 20)
 
 local keystoneTexts = {}
--- Create a frame to hold the keystone list
 local keystoneListFrame = CreateFrame("Frame", "KeystoneRouletteListFrame", frame)
-keystoneListFrame:SetPoint("TOPLEFT", rouletteFrame, "TOPRIGHT", 15, 0)
+keystoneListFrame:SetPoint("TOPLEFT", rouletteFrame, "TOPRIGHT", 10, 0)
 keystoneListFrame:SetPoint("BOTTOMRIGHT", -15, 50)
 
--- Function to populate the keystone list
 local function UpdateKeystoneList()
     local keys = KSR.GetPartyKeystoneData()
     local spacing = 5
@@ -64,14 +57,15 @@ local function UpdateKeystoneList()
     for i, key in ipairs(keys) do
         if not keystoneTexts[i] then
             keystoneTexts[i] = keystoneListFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            keystoneTexts[i]:SetJustifyH("RIGHT")
         end
 
         local keystoneText = keystoneTexts[i]
 
         if i == 1 then
-            keystoneText:SetPoint("TOPLEFT", 0, -spacing)
+            keystoneText:SetPoint("TOPRIGHT", 0, -spacing)
         else
-            keystoneText:SetPoint("TOP", keystoneTexts[i-1], "BOTTOM", 0, -spacing)
+            keystoneText:SetPoint("TOPRIGHT", keystoneTexts[i-1], "BOTTOMRIGHT", 0, -spacing)
         end
 
         keystoneText:SetText(string.format("%s +%d", key.abbr, key.level))
@@ -84,11 +78,10 @@ local function UpdateKeystoneList()
     end
 end
 
--- Function to spin the roulette wheel and display the winning keystone
 local function SpinRouletteWheel()
     winningKeystoneText:SetText("")
     rouletteWheel:SetRotation(0)
-    local spinDuration = 2
+    local spinDuration = KSR.constants.SPIN_DURATION
     local spinAnimation = rouletteWheel:CreateAnimationGroup()
     local spin = spinAnimation:CreateAnimation("Rotation")
     spin:SetDuration(spinDuration)
@@ -96,8 +89,7 @@ local function SpinRouletteWheel()
     spin:SetOrder(1)
     spinAnimation:Play()
 
-    -- After timeout, select, display and announce the winning keystone
-    C_Timer.After(spinDuration, function()
+    C_Timer.After(KSR.constants.SPIN_DURATION, function()
         local keys = KSR.GetPartyKeystoneData()
         local chosenKey = KSR.ChooseRandomKeystone(keys)
         if chosenKey then
@@ -132,7 +124,6 @@ KSR.OnKeystoneUpdate = function(unitName, keystoneInfo, _)
     end
 end
 
--- Callback for custom sync updates
 KSR.OnKeystoneSyncUpdate = function()
     if frame:IsShown() then
         UpdateKeystoneList()
@@ -141,8 +132,7 @@ end
 
 KSR.ShowKeystoneGUI = function()
     if KSR.IsLibKeystoneAvailable() then
-        -- Request keystones from party
-        if IsInGroup() and not IsInRaid() then
+        if KSR.IsInParty() then
             KSR.libKeystone.Request("PARTY")
             KSR.debugPrint("ShowKeystoneGUI: Requested keystones from LibKeystone (PARTY)")
         end

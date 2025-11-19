@@ -29,15 +29,11 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
         print("  " .. WrapTextInColorCode("/ksr reset", KSR.colors["YELLOW"]) .. " - Reset to default settings and reload UI")
         print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
     elseif lowercaseArgs == "reset" then
-        -- Collect analytics.
         KSR.WagoAnalytics:IncrementCounter("CmdReset")
-        --Reset to default settings.
         KeystoneRouletteDB = CopyTable(KSR.addonDefaults)
         ReloadUI()
     elseif lowercaseArgs == "debug" then
-        -- Collect analytics.
         KSR.WagoAnalytics:IncrementCounter("CmdDebug")
-        -- toggle KeystoneRouletteDB.debug
         KeystoneRouletteDB.debug = not KeystoneRouletteDB.debug
         if KeystoneRouletteDB.debug then
             print(WrapTextInColorCode(KSR.addon.title .. " debug mode enabled.", KSR.colors["PRIMARY"]))
@@ -45,11 +41,9 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
             print(WrapTextInColorCode(KSR.addon.title .. " debug mode disabled.", KSR.colors["PRIMARY"]))
         end
     elseif lowercaseArgs == "roll"  or lowercaseArgs == "roulette" then
-        -- Collect analytics.
         KSR.WagoAnalytics:IncrementCounter("CmdRoulette")
         KSR.RouletteKeystone()
     elseif lowercaseArgs == "roll dry"  or lowercaseArgs == "roulette dry" then
-        -- Collect analytics.
         KSR.WagoAnalytics:IncrementCounter("CmdRouletteDry")
         KSR.RouletteKeystone(true)
     elseif string.sub(lowercaseArgs, 1, 3) == "opt" then
