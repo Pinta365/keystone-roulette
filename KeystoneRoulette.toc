@@ -3,7 +3,7 @@
 ## Title: |cff45D388KeystoneRoulette|r
 ## Notes: Adds a bit of excitement to your Mythic+ runs by randomly selecting a keystone from your party members.
 ## Author: Pinta365@Github
-## Version: 1.2.0
+## Version: 1.2.1
 ## SavedVariables: KeystoneRouletteDB
 ## X-Curse-Project-ID: 1159943
 ## X-Wago-ID: b6mbVnKP
