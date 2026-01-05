@@ -101,8 +101,16 @@ local function SpinRouletteWheel()
     end)
 end
 
+local peekButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+peekButton:SetPoint("BOTTOMLEFT", 15, 50)
+peekButton:SetSize(90, 30)
+peekButton:SetText("Peek")
+peekButton:SetScript("OnClick", function()
+    KSR.PeekKeystones()
+end)
+
 local rollButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-rollButton:SetPoint("BOTTOMLEFT", 15, 15)
+rollButton:SetPoint("TOPLEFT", peekButton, "BOTTOMLEFT", 0, -5)
 rollButton:SetSize(140, 30)
 rollButton:SetText("Roulette a Keystone")
 rollButton:SetScript("OnClick", function()

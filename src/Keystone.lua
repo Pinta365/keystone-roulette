@@ -371,4 +371,39 @@ KSR.RouletteKeystone = function(dryrun)
     end
 end
 
+---Sends an emote showing the player peeking through the group's keystones.
+KSR.PeekKeystones = function()
+    local keys = KSR.GetPartyKeystoneData()
+    
+    if not keys or #keys == 0 then
+        local errorMessage = "Keystone Roulette: No keystones found in the party!"
+        if KSR.IsInParty() then
+            SendChatMessage(errorMessage, "PARTY")
+        else
+            print(WrapTextInColorCode(errorMessage, KSR.colors["YELLOW"]))
+        end
+        return
+    end
+    
+    -- Format keystones as "ABBR+LEVEL, ABBR+LEVEL and ABBR+LEVEL"
+    local keystoneParts = {}
+    for i, key in ipairs(keys) do
+        table.insert(keystoneParts, string.format("%s+%d", key.abbr, key.level))
+    end
+    
+    local keystoneList
+    if #keystoneParts == 1 then
+        keystoneList = keystoneParts[1]
+    elseif #keystoneParts == 2 then
+        keystoneList = keystoneParts[1] .. " and " .. keystoneParts[2]
+    else
+        local lastKey = table.remove(keystoneParts)
+        keystoneList = table.concat(keystoneParts, ", ") .. " and " .. lastKey
+    end
+    
+    local emoteMessage = string.format("peeks through the group's keystones and sees %s", keystoneList)
+    
+    SendChatMessage(emoteMessage, "EMOTE")
+end
+
 

@@ -24,6 +24,8 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
                 " or " .. WrapTextInColorCode("/ksr roulette", KSR.colors["YELLOW"]) .. " - Roulette for what key to run")
         print("  " .. WrapTextInColorCode("/ksr roll dry", KSR.colors["YELLOW"]) ..
                 " or " .. WrapTextInColorCode("/ksr roulette dry", KSR.colors["YELLOW"]) .. " - Simulate a roulette for what key to run")
+        print("  " .. WrapTextInColorCode("/ksr peek", KSR.colors["YELLOW"]) ..
+                " or " .. WrapTextInColorCode("/ksr open", KSR.colors["YELLOW"]) .. " - Emote showing group's keystones")
         print("  " .. WrapTextInColorCode("/ksr help", KSR.colors["YELLOW"]) .. " - Show this help info")
         print("  " .. WrapTextInColorCode("/ksr debug", KSR.colors["YELLOW"]) .. " - Toggles debug mode")
         print("  " .. WrapTextInColorCode("/ksr reset", KSR.colors["YELLOW"]) .. " - Reset to default settings and reload UI")
@@ -46,6 +48,9 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
     elseif lowercaseArgs == "roll dry"  or lowercaseArgs == "roulette dry" then
         KSR.WagoAnalytics:IncrementCounter("CmdRouletteDry")
         KSR.RouletteKeystone(true)
+    elseif lowercaseArgs == "peek" or lowercaseArgs == "open" then
+        KSR.WagoAnalytics:IncrementCounter("CmdPeek")
+        KSR.PeekKeystones()
     elseif string.sub(lowercaseArgs, 1, 3) == "opt" then
         Settings.OpenToCategory(KSR.settingsCategory.ID)
     else
