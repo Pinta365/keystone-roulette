@@ -31,6 +31,7 @@ Keystone Roulette offers the following slash commands:
 
 * `/ksr`: Opens the roulette GUI to visually roll for a keystone.
 * `/ksr roll`, `/ksr roulette`:  Rolls for a random keystone from your party.
+* `/ksr peek`, `/ksr open`: Sends an emote showing all available keystones in your group.
 * `/ksr options`: Opens the addon's options panel.
 * `/ksr help`: Displays a help message with usage instructions.
 * `/ksr debug`: Toggles debug mode.
