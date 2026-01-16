@@ -52,10 +52,10 @@ local function AbbreviateDungeonName(challengeMapID)
         --The War Within S1
         [501] = "SV",     -- The Stonevault
         [502] = "COT",    -- City of Threads
-        [503] = "ARA",    -- Ara-Kara, City of Echoes
-        [505] = "DB",     -- The Dawnbreaker
-        [353] = "SOB",    -- Siege of Boralus
-        [375] = "MOTS",   -- Mists of Tirna Scithe
+        [503] = "ARAK",   -- Ara-Kara, City of Echoes
+        [505] = "DAWN",   -- The Dawnbreaker
+        [353] = "SIEGE",  -- Siege of Boralus
+        [375] = "MISTS",  -- Mists of Tirna Scithe
         [376] = "NW",     -- Necrotic Wake
         [507] = "GB",     -- Grim Batol
 
@@ -70,10 +70,10 @@ local function AbbreviateDungeonName(challengeMapID)
         [525] = "FLOOD",  -- Operation: Floodgate
 
         -- The War Within S3, New IDs
-        [542] = "ED",     --Eco-Dome Al'dani
-        [378] = "HoA",    --Halls of Atonement
-        [391] = "T1:SoW", --Tazavesh: Streets of Wonder 
-        [392] = "T2:SG",  --Tazavesh: So'leah's Gambit 
+        [542] = "EDA",    -- Eco-Dome Al'dani
+        [378] = "HOA",    -- Halls of Atonement
+        [391] = "STRT",   -- Tazavesh: Streets of Wonder 
+        [392] = "GMBT",   -- Tazavesh: So'leah's Gambit 
         -- The War Within S3, Already added
         --Dawnbreaker (Season 1)
         --Ara-Kara, City of Echoes (Season 1)
@@ -89,17 +89,21 @@ local function AbbreviateDungeonName(challengeMapID)
         [200] = "HOV",    -- Halls of Valor
         [208] = "MOS",    -- Maw of Souls
         [206] = "NL",     -- Neltharion's Lair
-        [227] = "KARA:L", -- Return to Karazhan: Lower
-        [234] = "KARA:U", -- Return to Karazhan: Upper
-        [239] = "SOT",    -- Seat of the Triumvirate
+        [227] = "LOWR",   -- Return to Karazhan: Lower
+        [234] = "UPPR",   -- Return to Karazhan: Upper
+        [239] = "SEAT",   -- Seat of the Triumvirate
         [209] = "ARC",    -- The Arcway
         [207] = "VOTW",   -- Vault of the Wardens
 
-        --Midnight Beta Test
+        --Midnight Season 1
         [402] = "AA",     -- Algeth'ar Academy
-        [161] = "SKY",    -- Skyreach
+        [558] = "MT",     -- Magisters' Terrace
+        [560] = "MC",     -- Maisara Caverns
+        [559] = "NPX",    -- Nexus-Point Xenas
         [556] = "POS",    -- Pit of Saron
-        -- Seat of the Triumvirate (already added)
+                          -- Seat of the Triumvirate (already added in Legion Remix section)
+        [161] = "SR",     -- Skyreach
+        [557] = "WS",     -- Windrunner Spire
 
     }
     return abbreviations[challengeMapID]
