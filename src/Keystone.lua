@@ -101,7 +101,7 @@ local function AbbreviateDungeonName(challengeMapID)
         [560] = "MC",     -- Maisara Caverns
         [559] = "NPX",    -- Nexus-Point Xenas
         [556] = "POS",    -- Pit of Saron
-                          -- Seat of the Triumvirate (already added in Legion Remix section)
+        -- Seat of the Triumvirate (already added)
         [161] = "SR",     -- Skyreach
         [557] = "WS",     -- Windrunner Spire
 
@@ -322,7 +322,7 @@ KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
         if dryrun or not KSR.IsInParty() then
             print(message)
         else
-            SendChatMessage(message, "PARTY")
+            C_ChatInfo.SendChatMessage(message, "PARTY")
         end
     end
 
@@ -344,7 +344,7 @@ KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
             print(keyList)
             print(WrapTextInColorCode("You should get some friends and form a party for this to be printed to everyone.", KSR.colors["YELLOW"]))
         else
-            SendChatMessage(keyList, "PARTY")
+            C_ChatInfo.SendChatMessage(keyList, "PARTY")
         end
     end
 end
@@ -368,7 +368,7 @@ KSR.RouletteKeystone = function(dryrun)
     end
     
     if KSR.IsInParty() then
-        SendChatMessage(errorMessage, "PARTY")
+        C_ChatInfo.SendChatMessage(errorMessage, "PARTY")
     else
         local color = (not keys or #keys == 0) and KSR.colors["YELLOW"] or KSR.colors["RED"]
         print(WrapTextInColorCode(errorMessage, color))
@@ -382,7 +382,7 @@ KSR.PeekKeystones = function()
     if not keys or #keys == 0 then
         local errorMessage = "Keystone Roulette: No keystones found in the party!"
         if KSR.IsInParty() then
-            SendChatMessage(errorMessage, "PARTY")
+            C_ChatInfo.SendChatMessage(errorMessage, "PARTY")
         else
             print(WrapTextInColorCode(errorMessage, KSR.colors["YELLOW"]))
         end
@@ -407,7 +407,7 @@ KSR.PeekKeystones = function()
     
     local emoteMessage = string.format("peeks through the group's keystones and sees %s", keystoneList)
     
-    SendChatMessage(emoteMessage, "EMOTE")
+    C_ChatInfo.SendChatMessage(emoteMessage, "EMOTE")
 end
 
 
