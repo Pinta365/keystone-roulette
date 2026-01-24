@@ -2,5 +2,12 @@
     <Include file="Libs\LibStub\LibStub.lua"/>
     <Include file="libs\LibKeystone\LibKeystone.lua"/>
     <Include file="libs\WagoAnalytics\Shim.lua"/>
+    <Include file="src\Config.lua"/>
+    <Include file="src\Utilities.lua"/>
+    <Include file="src\KeystoneGUI.lua"/>
+    <Include file="src\Keystone.lua"/>
+    <Include file="src\SlashCommand.lua"/>
+    <Include file="src\OptionsPanel.lua"/>
+    <Include file="KeystoneRoulette.lua"/>
 </Ui>
 
