@@ -410,4 +410,140 @@ KSR.PeekKeystones = function()
     C_ChatInfo.SendChatMessage(emoteMessage, "EMOTE")
 end
 
+local VOTE_DURATION = 20
+local voteActive = false
+local voteFrame = CreateFrame("Frame")
 
+---Starts a party vote for which keystone to run.
+---@param duration number|nil optional vote duration in seconds, defaults to VOTE_DURATION
+---@param onWinner function|nil optional callback invoked with the winning key table when the vote resolves
+KSR.StartVote = function(duration, onWinner)
+        if voteActive then
+            local msg = "Keystone Roulette: A vote is already in progress!"
+            if KSR.IsInParty() then
+                C_ChatInfo.SendChatMessage(msg, "PARTY")
+            else
+                print(WrapTextInColorCode(msg, KSR.colors["YELLOW"]))
+            end
+            return
+        end
+
+        local keys = KSR.GetPartyKeystoneData()
+
+        if not keys or #keys == 0 then
+            local msg = "Keystone Roulette: No keystones found in the party!"
+            if KSR.IsInParty() then
+                C_ChatInfo.SendChatMessage(msg, "PARTY")
+            else
+                print(WrapTextInColorCode(msg, KSR.colors["YELLOW"]))
+            end
+            return
+        end
+
+        local inParty = KSR.IsInParty()
+        local function send(msg)
+            if inParty then
+                C_ChatInfo.SendChatMessage(msg, "PARTY")
+            else
+                print(WrapTextInColorCode(msg, KSR.colors["PRIMARY"]))
+            end
+        end
+
+        if #keys == 1 then
+            local key = keys[1]
+            send(string.format("Keystone Roulette: Only one key available — %s's %s +%d!", key.player, key.dungeon, key.level))
+            return
+        end
+
+        local validAbbrs = {}
+        local voteAbbrs = {}
+        local abbrSeen = {}
+        for _, key in ipairs(keys) do
+            local base = string.lower(key.abbr)
+            abbrSeen[base] = (abbrSeen[base] or 0) + 1
+            local voteAbbr = abbrSeen[base] > 1 and (base .. abbrSeen[base]) or base
+            validAbbrs[voteAbbr] = key
+            table.insert(voteAbbrs, voteAbbr)
+        end
+
+        local votes = {}
+        local voteDuration = (type(duration) == "number" and duration > 0) and duration or VOTE_DURATION
+        voteActive = true
+
+        send(string.format("Keystone Roulette: Vote for which key to run! Type the abbreviation in party chat. (you have %d seconds to vote)", voteDuration))
+
+        local optionParts = {"Options: "}
+        for i, voteAbbr in ipairs(voteAbbrs) do
+            table.insert(optionParts, string.format("%s(+%d)", string.upper(voteAbbr), validAbbrs[voteAbbr].level))
+            if i < #voteAbbrs then table.insert(optionParts, ", ") end
+        end
+        send(table.concat(optionParts))
+
+        -- Listen for votes
+        voteFrame:RegisterEvent("CHAT_MSG_PARTY")
+        voteFrame:RegisterEvent("CHAT_MSG_PARTY_LEADER")
+        voteFrame:SetScript("OnEvent", function(_, _, message, sender)
+            local trimmed = strtrim(string.lower(message))
+            if validAbbrs[trimmed] then
+                local playerName = Ambiguate(sender, "none")
+                votes[playerName] = trimmed
+                KSR.debugPrint("StartVote: " .. playerName .. " voted for " .. trimmed)
+            end
+        end)
+
+        -- 5 second warning if duration is long enough
+        if voteDuration > 15 then
+            C_Timer.After(voteDuration - 5, function()
+                if voteActive then
+                    send("Keystone Roulette: 5 seconds left to vote!")
+                end
+            end)
+        end
+
+        -- Tally after duration
+        C_Timer.After(voteDuration, function()
+            voteActive = false
+            voteFrame:UnregisterAllEvents()
+            voteFrame:SetScript("OnEvent", nil)
+
+            local tally = {}
+            for _, abbr in pairs(votes) do
+                tally[abbr] = (tally[abbr] or 0) + 1
+            end
+
+            if not next(tally) then
+                local chosenKey = KSR.ChooseRandomKeystone(keys)
+                send(string.format("Keystone Roulette: No votes received — random pick: %s's %s +%d!", chosenKey.player, chosenKey.dungeon, chosenKey.level))
+                if onWinner then onWinner(chosenKey) end
+                return
+            end
+
+            local maxVotes = 0
+            for _, count in pairs(tally) do
+                if count > maxVotes then maxVotes = count end
+            end
+
+            local winners = {}
+            for abbr, count in pairs(tally) do
+                if count == maxVotes then
+                    table.insert(winners, abbr)
+                end
+            end
+
+            local winnerAbbr
+            if #winners == 1 then
+                winnerAbbr = winners[1]
+            else
+                winnerAbbr = winners[math.random(1, #winners)]
+                local tieNames = {}
+                for _, abbr in ipairs(winners) do
+                    table.insert(tieNames, string.upper(abbr))
+                end
+                send("Keystone Roulette: Tie between " .. table.concat(tieNames, " and ") .. " — random pick!")
+            end
+
+            local winnerKey = validAbbrs[winnerAbbr]
+            send(string.format("Keystone Roulette: %s's %s +%d wins the vote!", winnerKey.player, winnerKey.dungeon, winnerKey.level))
+            if onWinner then onWinner(winnerKey) end
+        end)
+end
