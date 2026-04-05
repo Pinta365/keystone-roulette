@@ -117,21 +117,18 @@ local function NormalizePlayerName(playerName)
     return namePart
 end
 
-local function PlayerExistsInData(keystoneData, playerName, challengeMapID, level)
+local function PlayerExistsInData(keystoneData, playerName)
     local normalizedName = NormalizePlayerName(playerName)
     if not normalizedName then
         return false
     end
-    
-    for existingName, existingInfo in pairs(keystoneData) do
-        local existingNormalizedName = NormalizePlayerName(existingName)
-        if existingNormalizedName == normalizedName and 
-           existingInfo.challengeMapID == challengeMapID and 
-           existingInfo.level == level then
+
+    for existingName in pairs(keystoneData) do
+        if NormalizePlayerName(existingName) == normalizedName then
             return true
         end
     end
-    
+
     return false
 end
 
@@ -199,7 +196,7 @@ KSR.GetPartyKeystoneData = function()
             if success and result then
                 local openRaidCount = 0
                 for playerName, keystoneInfo in pairs(result) do
-                    if not PlayerExistsInData(keystoneData, playerName, keystoneInfo.challengeMapID, keystoneInfo.level) then
+                    if not PlayerExistsInData(keystoneData, playerName) then
                         keystoneData[playerName] = keystoneInfo
                         openRaidCount = openRaidCount + 1
                     else
@@ -246,8 +243,9 @@ KSR.GetPartyKeystoneData = function()
 
         local isPlayer = (unitName == playerName) or (unitName == playerFullName) or 
                         (string.find(unitName, "^" .. playerName .. "-") ~= nil)
-        
-        if UnitInParty(unitName) or isPlayer then
+        local baseName = ({strsplit("-", unitName)})[1]
+
+        if UnitInParty(unitName) or UnitInParty(baseName) or isPlayer then
             if not name then
                 name = "Unknown dungeon"
                 KSR.debugPrint(WrapTextInColorCode("Undefined dungeon found! mapID=" .. tostring(challengeMapID), KSR.colors["RED"]))
@@ -352,62 +350,76 @@ end
 ---Performs the keystone roulette, choosing a random keystone and announcing it to the party.
 ---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
 KSR.RouletteKeystone = function(dryrun)
-    local keys = KSR.GetPartyKeystoneData()
-    local chosenKey = KSR.ChooseRandomKeystone(keys)
+    if KSR.IsLibKeystoneAvailable() then
+        KSR.libKeystone.Request("PARTY")
+        KSR.debugPrint("RouletteKeystone: Requested fresh keystones from LibKeystone")
+    end
 
-    if chosenKey and keys then
-        KSR.AnnounceKeystone(keys, chosenKey, dryrun)
-        return
-    end
-    
-    local errorMessage
-    if not keys or #keys == 0 then
-        errorMessage = "Keystone Roulette: No keystones found in the party!"
-    else
-        errorMessage = "Keystone Roulette: An error occurred. Please try again."
-    end
-    
-    if KSR.IsInParty() then
-        C_ChatInfo.SendChatMessage(errorMessage, "PARTY")
-    else
-        local color = (not keys or #keys == 0) and KSR.colors["YELLOW"] or KSR.colors["RED"]
-        print(WrapTextInColorCode(errorMessage, color))
-    end
+    C_Timer.After(KSR.constants.REQUEST_DELAY, function()
+        local keys = KSR.GetPartyKeystoneData()
+        local chosenKey = KSR.ChooseRandomKeystone(keys)
+
+        if chosenKey and keys then
+            KSR.AnnounceKeystone(keys, chosenKey, dryrun)
+            return
+        end
+
+        local errorMessage
+        if not keys or #keys == 0 then
+            errorMessage = "Keystone Roulette: No keystones found in the party!"
+        else
+            errorMessage = "Keystone Roulette: An error occurred. Please try again."
+        end
+
+        if KSR.IsInParty() then
+            C_ChatInfo.SendChatMessage(errorMessage, "PARTY")
+        else
+            local color = (not keys or #keys == 0) and KSR.colors["YELLOW"] or KSR.colors["RED"]
+            print(WrapTextInColorCode(errorMessage, color))
+        end
+    end)
 end
 
 ---Sends an emote showing the player peeking through the group's keystones.
 KSR.PeekKeystones = function()
-    local keys = KSR.GetPartyKeystoneData()
-    
-    if not keys or #keys == 0 then
-        local errorMessage = "Keystone Roulette: No keystones found in the party!"
-        if KSR.IsInParty() then
-            C_ChatInfo.SendChatMessage(errorMessage, "PARTY")
-        else
-            print(WrapTextInColorCode(errorMessage, KSR.colors["YELLOW"]))
+    if KSR.IsLibKeystoneAvailable() then
+        KSR.libKeystone.Request("PARTY")
+        KSR.debugPrint("PeekKeystones: Requested fresh keystones from LibKeystone")
+    end
+
+    C_Timer.After(KSR.constants.REQUEST_DELAY, function()
+        local keys = KSR.GetPartyKeystoneData()
+
+        if not keys or #keys == 0 then
+            local errorMessage = "Keystone Roulette: No keystones found in the party!"
+            if KSR.IsInParty() then
+                C_ChatInfo.SendChatMessage(errorMessage, "PARTY")
+            else
+                print(WrapTextInColorCode(errorMessage, KSR.colors["YELLOW"]))
+            end
+            return
         end
-        return
-    end
-    
-    -- Format keystones as "ABBR+LEVEL, ABBR+LEVEL and ABBR+LEVEL"
-    local keystoneParts = {}
-    for i, key in ipairs(keys) do
-        table.insert(keystoneParts, string.format("%s+%d", key.abbr, key.level))
-    end
-    
-    local keystoneList
-    if #keystoneParts == 1 then
-        keystoneList = keystoneParts[1]
-    elseif #keystoneParts == 2 then
-        keystoneList = keystoneParts[1] .. " and " .. keystoneParts[2]
-    else
-        local lastKey = table.remove(keystoneParts)
-        keystoneList = table.concat(keystoneParts, ", ") .. " and " .. lastKey
-    end
-    
-    local emoteMessage = string.format("peeks through the group's keystones and sees %s", keystoneList)
-    
-    C_ChatInfo.SendChatMessage(emoteMessage, "EMOTE")
+
+        -- Format keystones as "ABBR+LEVEL, ABBR+LEVEL and ABBR+LEVEL"
+        local keystoneParts = {}
+        for i, key in ipairs(keys) do
+            table.insert(keystoneParts, string.format("%s+%d", key.abbr, key.level))
+        end
+
+        local keystoneList
+        if #keystoneParts == 1 then
+            keystoneList = keystoneParts[1]
+        elseif #keystoneParts == 2 then
+            keystoneList = keystoneParts[1] .. " and " .. keystoneParts[2]
+        else
+            local lastKey = table.remove(keystoneParts)
+            keystoneList = table.concat(keystoneParts, ", ") .. " and " .. lastKey
+        end
+
+        local emoteMessage = string.format("peeks through the group's keystones and sees %s", keystoneList)
+
+        C_ChatInfo.SendChatMessage(emoteMessage, "EMOTE")
+    end)
 end
 
 local VOTE_DURATION = 20

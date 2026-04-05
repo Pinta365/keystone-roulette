@@ -166,10 +166,8 @@ end
 
 KSR.ShowKeystoneGUI = function()
     if KSR.IsLibKeystoneAvailable() then
-        if KSR.IsInParty() then
-            KSR.libKeystone.Request("PARTY")
-            KSR.debugPrint("ShowKeystoneGUI: Requested keystones from LibKeystone (PARTY)")
-        end
+        KSR.libKeystone.Request("PARTY")
+        KSR.debugPrint("ShowKeystoneGUI: Requested keystones from LibKeystone (PARTY)")
     end
 
     if KSR.IsLibOpenRaidAvailable() then
