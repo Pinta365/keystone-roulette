@@ -3,6 +3,7 @@ ignore:
   - .github
   - README.md
   - .pkgmeta
+  - deno.json
 externals:
   libs/WagoAnalytics: https://github.com/wagoio/WagoAnalyticsShim
   libs/LibStub: https://repos.curseforge.com/wow/libstub/trunk
