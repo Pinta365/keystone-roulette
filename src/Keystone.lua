@@ -105,6 +105,16 @@ local function AbbreviateDungeonName(challengeMapID)
         [161] = "SR",     -- Skyreach
         [557] = "WS",     -- Windrunner Spire
 
+        --Midnight Season 2
+        [588] = "AOF",    -- Altar of Fangs
+        [584] = "BV",     -- The Blinding Vale
+        [586] = "DEN",    -- Den of Nalorakk
+        [249] = "KR",     -- Kings' Rest
+        [587] = "MR",     -- Murder Row
+        [399] = "RLP",    -- Ruby Life Pools
+        [250] = "TOS",    -- Temple of Sethraliss
+        [585] = "VOID",   -- Voidscar Arena
+
     }
     return abbreviations[challengeMapID]
 end
