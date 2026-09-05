@@ -1,0 +1,18 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@pinta365/toc-bumper@*": "0.1.0",
+    "jsr:@std/semver@^1.0.5": "1.0.8"
+  },
+  "jsr": {
+    "@pinta365/toc-bumper@0.1.0": {
+      "integrity": "3b4e5b18218c63bc2a7042f0f0a76b4e35d1c18f0c122319a98857f53018f6f5",
+      "dependencies": [
+        "jsr:@std/semver"
+      ]
+    },
+    "@std/semver@1.0.8": {
+      "integrity": "dc830e8b8b6a380c895d53fbfd1258dc253704ca57bbe1629ac65fd7830179b7"
+    }
+  }
+}
