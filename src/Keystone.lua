@@ -113,7 +113,7 @@ local function AbbreviateDungeonName(challengeMapID)
         [587] = "MR",     -- Murder Row
         [399] = "RLP",    -- Ruby Life Pools
         [250] = "TOS",    -- Temple of Sethraliss
-        [585] = "VOID",   -- Voidscar Arena
+        [585] = "VA",     -- Voidscar Arena
 
     }
     return abbreviations[challengeMapID]
