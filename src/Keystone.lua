@@ -292,11 +292,71 @@ KSR.ChooseRandomKeystone = function(keys)
     return keys[randomIndex]
 end
 
+---Filters a keystone list down to the keys inside an inclusive level range.
+---@param keys table table containing keystone information
+---@param minLevel number|nil lowest key level to keep, nil for no lower bound
+---@param maxLevel number|nil highest key level to keep, nil for no upper bound
+---@return table the keystones inside the range
+KSR.FilterKeysByLevel = function(keys, minLevel, maxLevel)
+    if not keys or (not minLevel and not maxLevel) then
+        return keys
+    end
+
+    local filtered = {}
+    for _, key in ipairs(keys) do
+        if (not minLevel or key.level >= minLevel) and (not maxLevel or key.level <= maxLevel) then
+            table.insert(filtered, key)
+        end
+    end
+
+    KSR.debugPrint("FilterKeysByLevel: " .. #filtered .. " of " .. #keys .. " keys inside range")
+    return filtered
+end
+
+---Describes a key level range for use in chat messages.
+---@param minLevel number|nil lowest key level in the range
+---@param maxLevel number|nil highest key level in the range
+---@return string|nil the description, or nil when the range is unbounded
+KSR.DescribeLevelRange = function(minLevel, maxLevel)
+    if minLevel and maxLevel then
+        return string.format("+%d to +%d", minLevel, maxLevel)
+    elseif minLevel then
+        return string.format("+%d and above", minLevel)
+    elseif maxLevel then
+        return string.format("+%d and below", maxLevel)
+    end
+    return nil
+end
+
+---Builds the message shown when no keystones are eligible, distinguishing an
+---empty party from a range that filtered every key out.
+---@param allKeys table the unfiltered keystone list
+---@param minLevel number|nil lowest key level that was requested
+---@param maxLevel number|nil highest key level that was requested
+---@return string the message to show
+KSR.BuildNoKeysMessage = function(allKeys, minLevel, maxLevel)
+    local rangeText = KSR.DescribeLevelRange(minLevel, maxLevel)
+
+    if not rangeText or not allKeys or #allKeys == 0 then
+        return "Keystone Roulette: No keystones found in the party!"
+    end
+
+    local levels = {}
+    for _, key in ipairs(allKeys) do
+        table.insert(levels, string.format("+%d", key.level))
+    end
+
+    return string.format("Keystone Roulette: No keys %s (group has %s).", rangeText, table.concat(levels, ", "))
+end
+
 ---Announces the chosen keystone to party chat and lists all available keystones.
 ---@param keys table table containing keystone information for all party members
 ---@param chosenKey table the keystone data that was randomly chosen
----@---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
-KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
+---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
+---@param minLevel number|nil (optional) lowest key level the roll was limited to
+---@param maxLevel number|nil (optional) highest key level the roll was limited to
+KSR.AnnounceKeystone = function(keys, chosenKey, dryrun, minLevel, maxLevel)
+    local rangeText = KSR.DescribeLevelRange(minLevel, maxLevel)
     local playerName = chosenKey.player
     local dungeonName = chosenKey.dungeon
     local keystoneLevel = chosenKey.level
@@ -313,7 +373,8 @@ KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
     local message = table.concat(announcementParts)
     local line = "----------------------------------------------------"
     print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
-    print(WrapTextInColorCode("Keystone Roulette - Available Keys:", KSR.colors["YELLOW"]))
+    print(WrapTextInColorCode(rangeText and ("Keystone Roulette - Available Keys (" .. rangeText .. "):")
+            or "Keystone Roulette - Available Keys:", KSR.colors["YELLOW"]))
     print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
     for i, key in ipairs(keys) do
         local keyString = string.format("%d. %s - %s +%d", i, key.player, key.dungeon, key.level)
@@ -334,7 +395,7 @@ KSR.AnnounceKeystone = function(keys, chosenKey, dryrun)
         end
     end
 
-    local keyListParts = {"Available keys were: "}
+    local keyListParts = {rangeText and ("Available keys (" .. rangeText .. ") were: ") or "Available keys were: "}
     for i, key in ipairs(keys) do
         table.insert(keyListParts, string.format("%s+%d", key.abbr, key.level))
         if i < #keys then
@@ -359,29 +420,32 @@ end
 
 ---Performs the keystone roulette, choosing a random keystone and announcing it to the party.
 ---@param dryrun boolean (optional) if true, performs a dry run and prints to console instead of party chat
-KSR.RouletteKeystone = function(dryrun)
+---@param minLevel number|nil (optional) lowest key level eligible for the roll
+---@param maxLevel number|nil (optional) highest key level eligible for the roll
+KSR.RouletteKeystone = function(dryrun, minLevel, maxLevel)
     if KSR.IsLibKeystoneAvailable() then
         KSR.libKeystone.Request("PARTY")
         KSR.debugPrint("RouletteKeystone: Requested fresh keystones from LibKeystone")
     end
 
     C_Timer.After(KSR.constants.REQUEST_DELAY, function()
-        local keys = KSR.GetPartyKeystoneData()
+        local allKeys = KSR.GetPartyKeystoneData()
+        local keys = KSR.FilterKeysByLevel(allKeys, minLevel, maxLevel)
         local chosenKey = KSR.ChooseRandomKeystone(keys)
 
         if chosenKey and keys then
-            KSR.AnnounceKeystone(keys, chosenKey, dryrun)
+            KSR.AnnounceKeystone(keys, chosenKey, dryrun, minLevel, maxLevel)
             return
         end
 
         local errorMessage
         if not keys or #keys == 0 then
-            errorMessage = "Keystone Roulette: No keystones found in the party!"
+            errorMessage = KSR.BuildNoKeysMessage(allKeys, minLevel, maxLevel)
         else
             errorMessage = "Keystone Roulette: An error occurred. Please try again."
         end
 
-        if KSR.IsInParty() then
+        if KSR.IsInParty() and not dryrun then
             C_ChatInfo.SendChatMessage(errorMessage, "PARTY")
         else
             local color = (not keys or #keys == 0) and KSR.colors["YELLOW"] or KSR.colors["RED"]
@@ -439,7 +503,9 @@ local voteFrame = CreateFrame("Frame")
 ---Starts a party vote for which keystone to run.
 ---@param duration number|nil optional vote duration in seconds, defaults to VOTE_DURATION
 ---@param onWinner function|nil optional callback invoked with the winning key table when the vote resolves
-KSR.StartVote = function(duration, onWinner)
+---@param minLevel number|nil optional lowest key level eligible for the vote
+---@param maxLevel number|nil optional highest key level eligible for the vote
+KSR.StartVote = function(duration, onWinner, minLevel, maxLevel)
         if voteActive then
             local msg = "Keystone Roulette: A vote is already in progress!"
             if KSR.IsInParty() then
@@ -450,10 +516,11 @@ KSR.StartVote = function(duration, onWinner)
             return
         end
 
-        local keys = KSR.GetPartyKeystoneData()
+        local allKeys = KSR.GetPartyKeystoneData()
+        local keys = KSR.FilterKeysByLevel(allKeys, minLevel, maxLevel)
 
         if not keys or #keys == 0 then
-            local msg = "Keystone Roulette: No keystones found in the party!"
+            local msg = KSR.BuildNoKeysMessage(allKeys, minLevel, maxLevel)
             if KSR.IsInParty() then
                 C_ChatInfo.SendChatMessage(msg, "PARTY")
             else
@@ -471,9 +538,12 @@ KSR.StartVote = function(duration, onWinner)
             end
         end
 
+        local rangeText = KSR.DescribeLevelRange(minLevel, maxLevel)
+
         if #keys == 1 then
             local key = keys[1]
-            send(string.format("Keystone Roulette: Only one key available — %s's %s +%d!", key.player, key.dungeon, key.level))
+            send(string.format("Keystone Roulette: Only one key %s — %s's %s +%d!",
+                rangeText and ("in range " .. rangeText) or "available", key.player, key.dungeon, key.level))
             return
         end
 
@@ -492,7 +562,8 @@ KSR.StartVote = function(duration, onWinner)
         local voteDuration = (type(duration) == "number" and duration > 0) and duration or VOTE_DURATION
         voteActive = true
 
-        send(string.format("Keystone Roulette: Vote for which key to run! Type the abbreviation in party chat. (you have %d seconds to vote)", voteDuration))
+        send(string.format("Keystone Roulette: Vote for which key to run%s! Type the abbreviation in party chat. (you have %d seconds to vote)",
+            rangeText and (" (" .. rangeText .. ")") or "", voteDuration))
 
         local optionParts = {"Options: "}
         for i, voteAbbr in ipairs(voteAbbrs) do

@@ -4,9 +4,48 @@ local addonName, KSR = ...
 
 SLASH_KeystoneRoulette_CMD1 = '/ksr'
 
+---Extracts and strips a key level range token from the arguments.
+---Accepts "+10" (10 and above) or "+10-15" (10 through 15). A lower bound of
+---0 means unbounded, so "+0-15" reads as "15 and below".
+---@param args string the lowercased argument string
+---@return string the arguments with the range token removed
+---@return number|nil the lowest key level requested, if any
+---@return number|nil the highest key level requested, if any
+local function ExtractLevelRange(args)
+    local min, max = string.match(args, "%+(%d+)%-(%d+)")
+
+    if min then
+        args = string.gsub(args, "%+%d+%-%d+", "")
+    else
+        min = string.match(args, "%+(%d+)")
+        if min then
+            args = string.gsub(args, "%+%d+", "")
+        end
+    end
+
+    args = string.gsub(args, "%s+", " ")
+    args = strtrim(args)
+
+    if not min then
+        return args, nil, nil
+    end
+
+    min, max = tonumber(min), tonumber(max)
+
+    if max and min > max then
+        min, max = max, min
+    end
+
+    if min == 0 then
+        min = nil
+    end
+
+    return args, min, max
+end
+
 ---@param args string arguments following the slash command
 SlashCmdList["KeystoneRoulette_CMD"] = function(args)
-    local lowercaseArgs = string.lower(args)
+    local lowercaseArgs, minLevel, maxLevel = ExtractLevelRange(string.lower(args))
     local line = "----------------------------------------------------------------------"
 
     if lowercaseArgs == "help" or lowercaseArgs == "info" or lowercaseArgs == "?" then
@@ -31,6 +70,12 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
         print("  " .. WrapTextInColorCode("/ksr debug", KSR.colors["YELLOW"]) .. " - Toggles debug mode")
         print("  " .. WrapTextInColorCode("/ksr reset", KSR.colors["YELLOW"]) .. " - Reset to default settings and reload UI")
         print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
+        print("Key level range (optional, works on roll and vote):")
+        print("  " .. WrapTextInColorCode("/ksr roll +10", KSR.colors["YELLOW"]) .. " - Only keys +10 and above")
+        print("  " .. WrapTextInColorCode("/ksr roll +10-15", KSR.colors["YELLOW"]) .. " - Only keys +10 through +15")
+        print("  " .. WrapTextInColorCode("/ksr roll +0-15", KSR.colors["YELLOW"]) .. " - Only keys +15 and below")
+        print("  " .. WrapTextInColorCode("/ksr vote 30 +10-15", KSR.colors["YELLOW"]) .. " - 30s vote, keys +10 through +15")
+        print(WrapTextInColorCode(line, KSR.colors["YELLOW"]))
     elseif lowercaseArgs == "reset" then
         KSR.WagoAnalytics:IncrementCounter("CmdReset")
         KeystoneRouletteDB = CopyTable(KSR.addonDefaults)
@@ -45,10 +90,10 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
         end
     elseif lowercaseArgs == "roll"  or lowercaseArgs == "roulette" then
         KSR.WagoAnalytics:IncrementCounter("CmdRoulette")
-        KSR.RouletteKeystone()
+        KSR.RouletteKeystone(false, minLevel, maxLevel)
     elseif lowercaseArgs == "roll dry"  or lowercaseArgs == "roulette dry" then
         KSR.WagoAnalytics:IncrementCounter("CmdRouletteDry")
-        KSR.RouletteKeystone(true)
+        KSR.RouletteKeystone(true, minLevel, maxLevel)
     elseif lowercaseArgs == "peek" or lowercaseArgs == "open" then
         KSR.WagoAnalytics:IncrementCounter("CmdPeek")
         KSR.PeekKeystones()
@@ -56,7 +101,7 @@ SlashCmdList["KeystoneRoulette_CMD"] = function(args)
            string.match(lowercaseArgs, "^startvote %d+$") or string.match(lowercaseArgs, "^vote %d+$") then
         KSR.WagoAnalytics:IncrementCounter("CmdStartVote")
         local customDuration = tonumber(string.match(lowercaseArgs, "%d+"))
-        KSR.StartVote(customDuration)
+        KSR.StartVote(customDuration, nil, minLevel, maxLevel)
     elseif string.sub(lowercaseArgs, 1, 3) == "opt" then
         Settings.OpenToCategory(KSR.settingsCategory.ID)
     else
