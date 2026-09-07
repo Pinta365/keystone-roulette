@@ -37,6 +37,20 @@ Keystone Roulette offers the following slash commands:
 * `/ksr debug`: Toggles debug mode.
 * `/ksr reset`: Resets the addon settings to their defaults and reloads the UI.
 
+### Limiting the key level
+
+Rolls and votes accept an optional key level range, so you don't roll a +2 when the group wants to push. The range applies to that command only – nothing is saved.
+
+* `/ksr roll +10`: Only rolls keys +10 and above.
+* `/ksr roll +10-15`: Only rolls keys +10 through +15.
+* `/ksr roll +0-15`: Only rolls keys +15 and below.
+* `/ksr vote +10-15`: Same range applied to a vote.
+* `/ksr vote 30 +10-15`: A 30 second vote limited to keys +10 through +15.
+
+The GUI has the same thing: **min** and **max** boxes above the buttons that apply to the next Roulette or Start Vote. Keys outside the range are greyed out in the key list so you can see what you're excluding. Leave the boxes blank to include every key.
+
+If no key in the group falls inside the range, the addon says so and lists the key levels the group actually has. `/ksr peek` is never filtered – it always shows every key in the group.
+
 ## Troubleshooting
 
 If you encounter any issues, try these steps:
